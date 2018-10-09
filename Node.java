@@ -3,10 +3,10 @@ import java.util.Iterator;
 
 public class Node {
 	int color;
-	LinkedList<Node> nodes;
 	int index;
 	boolean test; //if need
-	
+	LinkedList<Node> nodes;
+
 	public static LinkedList<Node> allNodes = new LinkedList<Node>();
 	
 	public static Node exists(int index) {
@@ -36,7 +36,11 @@ public class Node {
 	public static void clear() {
 		allNodes.clear();
 	}
-	
+	public static void remove(Node node) {
+		node.remove();
+		allNodes.remove(node);
+	}
+
 	public Node() {
 		color = 0;
 		nodes = new LinkedList<Node>();
@@ -51,7 +55,10 @@ public class Node {
 		
 	}
 	
-	
+	public Node getChild(int number) {
+		return nodes.get(number);
+	}
+
 	public void remove() {
 		for(int i = 0; i < nodes.size(); i++) {
 			nodes.get(i).nodes.remove(this);

@@ -3,12 +3,14 @@ import java.util.LinkedList;
 public class Graph {
 	int minDegree;
 	int maxDegree;
-	
+	int getChromaticNumber;
+
 	int edges;
 	int verts;
 	
 	boolean complete = false;
 	boolean nullGraph = false;
+	boolean acyclic = false;
 	
 	LinkedList<Graph> subgraph;	//if need
 	
@@ -49,6 +51,7 @@ public class Graph {
 				}
 			}
 		}
+		findLowerBound();
 	}
 	
 	private void setNullGraph(){
@@ -59,14 +62,70 @@ public class Graph {
 		complete = (edges == verts*(verts -1)/2);
 	}
 	
-	private void findBounds(){	//update bound values (find bounds algorithm)
-		if(!(complete || nullGraph)) {
-		
+	private void findLowerBound(){	//update bound values (find bounds algorithm)
+		if(complete) {
+			minDegree = verts - 1;
+		}else if(nullGraph){
+			minDegree = 0;
+		}else {
+			//
 		}
 	}
 	
+	private void findUpperBound(){	//update bound values (find bounds algorithm)
+		if(complete) {
+			maxDegree = verts - 1;
+		}else if(nullGraph){
+			maxDegree = 0;
+		}else {
+			//
+		}
+	}
+
 	private boolean reduce(int degree) {//node with degree = degree will be eliminated
-		return false;
+		boolean reduced = true;
+		Node tmp;
+		boolean tmpNullGraph = nullGraph;
+		while(!complete || !nullGraph && reduced){
+			reduced = false;
+			if(degree == minDegree){
+				for(int i = 0; i < minDegreeNodes.size(); i++) {
+					tmp = minDegreeNodes.get(i);
+					verts--;
+					edges -= tmp.getDegree(); 
+					Node.remove(tmp);	
+				}
+				reduced = true;
+				minDegree = -1;
+			}else if(degree == maxDegree){
+				for(int i = 0; i < maxDegreeNodes.size(); i++) {
+					tmp = maxDegreeNodes.get(i);
+					verts--;
+					edges -= tmp.getDegree();
+					Node.remove(tmp);
+				}
+				reduced = true;
+				maxDegree = -1;
+			}else{
+				for(int i = 0; i < Node.allNodes.size(); i++){
+					tmp = Node.allNodes.get(i);
+					if(tmp.getDegree() == degree) {
+						verts--;
+						edges -= tmp.getDegree();
+						Node.remove(tmp);
+						reduece = true;
+					}
+				}
+			}
+		}
+		if(minDegree == -1)
+			findLowerBound();
+		if(maxDegree == -1)
+			findUpperBound();
+		setNullGraph();
+		setComplete();
+		if(nullGraph != tmpNullGraph)
+			acyclic = true;
 	}
 	
 	//gives a name and order the nodes
@@ -75,15 +134,52 @@ public class Graph {
 	}
 	
 	private int solve() {	//<- algorithm goes here
-		return 0;	
+		int c = 0;
+
+		if(acyclic){
+			//
+		}else if(complete){
+			//
+		}else if(nullGraph){
+			//
+		}else if((minDegree == maxDegree) && (minDegree == 2)){ //single cycle
+			if(verts % 2 == 0){
+				//
+			}else {
+				//
+			}
+		}else{ //not acyclic, not a single cycle
+			//
+			LinkedList<Boolean>[] colors = new LinkedList<Boolean>[Node.allNodes.size()];
+			int color = 0;
+			LinkedList<Node> wainting = new LinkedList<Node>();
+			
+			for(int i = 0; i < Node.allNodes.size(); i++){
+			  tmp = Node.allNodes.get(i);
+			  
+				if(i == 0) {
+				colors[tmp.index].add(true);
+				for(int j = 0; j < tmp.getDegree(); j++){
+				  colors[tmp.getChild(j)].add(false);
+				  colors[tmp.getChild(j)].add(true);
+				}
+				Node.allNodes.remove(tmp);
+			  }
+			}
+			//
+		}
+		return c;
 	}
 	
 	public int[] getBounds() {
-		return new int[]{minDegree + 1, maxDegree + 1};
+		return new int[]{minDegree, maxDegree + 1};
 	}
 	
 	public int getChromaticNumber() {
-		return solve();
+		int c = chromaticNumber;
+		if(c == 0)
+			c = solve();
+		return c;
 	}
 	
 	public boolean isComplete() {
