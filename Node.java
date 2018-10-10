@@ -69,4 +69,26 @@ public class Node {
 	public int getDegree() {
 		return nodes.size();
 	}
+
+	public int conflicts() {
+		int c = 0;
+		for(int i = 0; i < nodes.size(); i++){
+			if(nodes.get(i).color == color)
+				c++;
+		}
+		return c;
+	}
+
+	public boolean isNeighbour(Node other){
+		return this.nodes.indexOf(other) != -1;
+	}
+	
+	public String toString() {
+		return Integer.toString(index);
+	}	
+	public void printChildren() {
+		for(int i = 0; i < nodes.size(); i++){
+			System.out.print(nodes.get(i) + " ");
+		}
+	}
 }

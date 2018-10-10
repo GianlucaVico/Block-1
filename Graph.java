@@ -3,7 +3,7 @@ import java.util.LinkedList;
 public class Graph {
 	int minDegree;
 	int maxDegree;
-	int getChromaticNumber;
+	int chromaticNumber;
 
 	int edges;
 	int verts;
@@ -63,32 +63,58 @@ public class Graph {
 	}
 	
 	private void findLowerBound(){	//update bound values (find bounds algorithm)
-		if(complete) {
+/*		if(complete) {
 			minDegree = verts - 1;
 		}else if(nullGraph){
 			minDegree = 0;
 		}else {
-			//
+			//max degree already found
+			minDegree = Integer.MAX_VALUE;
+			minDegreeNodes.clear();
+			for(int i = 0; i < Node.allNodes.size(); i++){
+				if(Node.allNodes.get(i).getDegree() < minDegree){
+					minDegree = Node.allNodes.get(i).getDegree();
+					minDegreeNodes.clear();
+				}
+				if(Node.allNodes.get(i).getDegree() == minDegree){
+					minDegreeNodes.add(Node.allNodes.get(i));
+				}
+			}
+			if(minDegree == Integer.MAX_VALUE)
+				minDegree = 0;
 		}
+		*/
 	}
 	
 	private void findUpperBound(){	//update bound values (find bounds algorithm)
-		if(complete) {
+	/*	if(complete) {
 			maxDegree = verts - 1;
 		}else if(nullGraph){
 			maxDegree = 0;
 		}else {
-			//
-		}
+			//max degree already found
+			maxDegree = 0;
+			maxDegreeNodes.clear();
+			for(int i = 0; i < Node.allNodes.size(); i++){
+				if(Node.allNodes.get(i).getDegree() > maxDegree){
+					maxDegree = Node.allNodes.get(i).getDegree();
+					maxDegreeNodes.clear();
+				}
+				if(Node.allNodes.get(i).getDegree() == maxDegree){
+					maxDegreeNodes.add(Node.allNodes.get(i));
+				}
+			}
+		}*/
 	}
 
-	private boolean reduce(int degree) {//node with degree = degree will be eliminated
+	private void reduce(int degree) {//node with degree = degree will be eliminated
 		boolean reduced = true;
 		Node tmp;
 		boolean tmpNullGraph = nullGraph;
-		while(!complete || !nullGraph && reduced){
+		//while(!complete || !nullGraph && reduced){
+		while(reduced){	
 			reduced = false;
-			if(degree == minDegree){
+			/*if(degree == minDegree){
 				for(int i = 0; i < minDegreeNodes.size(); i++) {
 					tmp = minDegreeNodes.get(i);
 					verts--;
@@ -106,17 +132,17 @@ public class Graph {
 				}
 				reduced = true;
 				maxDegree = -1;
-			}else{
+			}else{*/
 				for(int i = 0; i < Node.allNodes.size(); i++){
 					tmp = Node.allNodes.get(i);
 					if(tmp.getDegree() == degree) {
 						verts--;
 						edges -= tmp.getDegree();
 						Node.remove(tmp);
-						reduece = true;
+						reduced = true;
 					}
 				}
-			}
+			//}
 		}
 		if(minDegree == -1)
 			findLowerBound();
@@ -126,47 +152,101 @@ public class Graph {
 		setComplete();
 		if(nullGraph != tmpNullGraph)
 			acyclic = true;
-	}
+	}	
 	
 	//gives a name and order the nodes
 	private void label(Node first, int start){	//if need
 	
 	}
-	
+
+	private int soleveGeneric(Node start, int color) {
+		start.test = true;
+		start.color = color;
+		boolean done = false;
+		LinkedList<Node> notColor = Node.allNodes;
+		LinkedList<Node> sameColor;
+		LinkedList<String> colors = new LinkedList<String>();
+		
+		while(!done){
+			sameColor = notColor;
+			notColor = new LinkedList<Node>();
+			for(int i = 0; i < start.getDegree(); i++){
+				if(!start.getChild(i).test){
+					notColor.add(start.getChild(i));
+					sameColor.remove(start.getChild(i));
+					start.getChild(i).color = color + 1;
+				}
+			}	
+
+			int maxConflict = 0, tmpConflict;
+			Node conflict = null, tmp;
+			do{
+				maxConflict = 0;
+				for(int i = 0; i < sameColor.size(); i++){
+					tmp = sameColor.get(i);
+					tmpConflict = tmp.conflicts();
+					if(tmpConflict > maxConflict){
+						maxConflict = tmpConflict;
+						conflict = tmp;
+					}
+					if(tmpConflict == 0){
+						tmp.test = true;
+						tmp.color = color;
+					}
+				}
+				if(maxConflict != 0){				
+					conflict.color = color + 1;
+					notColor.add(conflict);
+					sameColor.remove(conflict);
+				}
+			}while(maxConflict != 0);
+
+			if(notColor.size() <= 2){	//it works somethimes but idk why
+				done = true;
+				System.out.println("Stopping: " + notColor.size());
+				if(notColor.size() == 2 && notColor.get(0).isNeighbour(notColor.get(1))){
+					System.out.println("Neighbours " + notColor.get(0).index + " " + notColor.get(1).index + ": " + notColor.get(0).isNeighbour(notColor.get(1)));
+					color += 2;
+				}else{
+					color++;
+				}
+			}else{
+				int i = 0;
+				while(i < notColor.size() && notColor.get(i).test)
+					i++;
+				start = notColor.get(i);
+				color++;
+			}
+			//System.out.println(color);
+			for(int i = 0; i < sameColor.size(); i++){
+				colors.add(sameColor.get(i).index + " " + sameColor.get(i).color);
+			}
+		}
+		for(int i = 0; i < colors.size(); i++){
+			System.out.println(colors.get(i));
+		}
+		
+		return color + 1;
+	}
+
 	private int solve() {	//<- algorithm goes here
 		int c = 0;
 
-		if(acyclic){
-			//
+		if(acyclic && !nullGraph){
+            c = 2;
 		}else if(complete){
-			//
+            c = verts;
 		}else if(nullGraph){
-			//
+            c = 1;
 		}else if((minDegree == maxDegree) && (minDegree == 2)){ //single cycle
 			if(verts % 2 == 0){
-				//
+                c = 2;
 			}else {
-				//
+                c = 3;
 			}
-		}else{ //not acyclic, not a single cycle
-			//
-			LinkedList<Boolean>[] colors = new LinkedList<Boolean>[Node.allNodes.size()];
-			int color = 0;
-			LinkedList<Node> wainting = new LinkedList<Node>();
-			
-			for(int i = 0; i < Node.allNodes.size(); i++){
-			  tmp = Node.allNodes.get(i);
-			  
-				if(i == 0) {
-				colors[tmp.index].add(true);
-				for(int j = 0; j < tmp.getDegree(); j++){
-				  colors[tmp.getChild(j)].add(false);
-				  colors[tmp.getChild(j)].add(true);
-				}
-				Node.allNodes.remove(tmp);
-			  }
-			}
-			//
+		}else{
+			reduce(1);
+			c = soleveGeneric(maxDegreeNodes.get(0), 0);
 		}
 		return c;
 	}

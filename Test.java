@@ -1,10 +1,15 @@
 public class Test{
 	public static void main(String[] args) {
-		ColEdge[] e = ReadGraph.getEdges("allGraphs2018\\graph01.txt");
+		ColEdge[] e;
+		if(args.length == 0)
+			e = ReadGraph.getEdges("allGraphs2018\\graph.txt");
+		else
+			e = ReadGraph.getEdges("allGraphs2018\\graph" + args[0] + ".txt");
 		Graph g = new Graph(e, ReadGraph.edges, ReadGraph.verts);
-		System.out.println(g.getBounds()[0]);
+		//System.out.println(g.getBounds()[0]);
 		System.out.println(g.getBounds()[1]);
-		System.out.println(g.isNullGraph());
-		System.out.println(g.isComplete());
+		//System.out.println(g.isNullGraph());
+		//System.out.println(g.isComplete());
+		System.out.println(g.getChromaticNumber());
 	}
 }
