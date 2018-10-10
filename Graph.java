@@ -63,48 +63,24 @@ public class Graph {
 	}
 	
 	private void findLowerBound(){	//update bound values (find bounds algorithm)
-/*		if(complete) {
+		if(complete) {
 			minDegree = verts - 1;
 		}else if(nullGraph){
 			minDegree = 0;
 		}else {
-			//max degree already found
-			minDegree = Integer.MAX_VALUE;
-			minDegreeNodes.clear();
-			for(int i = 0; i < Node.allNodes.size(); i++){
-				if(Node.allNodes.get(i).getDegree() < minDegree){
-					minDegree = Node.allNodes.get(i).getDegree();
-					minDegreeNodes.clear();
-				}
-				if(Node.allNodes.get(i).getDegree() == minDegree){
-					minDegreeNodes.add(Node.allNodes.get(i));
-				}
-			}
-			if(minDegree == Integer.MAX_VALUE)
-				minDegree = 0;
+
 		}
-		*/
+		
 	}
 	
 	private void findUpperBound(){	//update bound values (find bounds algorithm)
-	/*	if(complete) {
+		if(complete) {
 			maxDegree = verts - 1;
 		}else if(nullGraph){
 			maxDegree = 0;
 		}else {
-			//max degree already found
-			maxDegree = 0;
-			maxDegreeNodes.clear();
-			for(int i = 0; i < Node.allNodes.size(); i++){
-				if(Node.allNodes.get(i).getDegree() > maxDegree){
-					maxDegree = Node.allNodes.get(i).getDegree();
-					maxDegreeNodes.clear();
-				}
-				if(Node.allNodes.get(i).getDegree() == maxDegree){
-					maxDegreeNodes.add(Node.allNodes.get(i));
-				}
-			}
-		}*/
+			
+		}
 	}
 
 	private void reduce(int degree) {//node with degree = degree will be eliminated
@@ -165,7 +141,7 @@ public class Graph {
 		boolean done = false;
 		LinkedList<Node> notColor = Node.allNodes;
 		LinkedList<Node> sameColor;
-		LinkedList<String> colors = new LinkedList<String>();
+		LinkedList<String> colors = new LinkedList<String>();	//debug
 		
 		while(!done){
 			sameColor = notColor;
@@ -222,9 +198,10 @@ public class Graph {
 				colors.add(sameColor.get(i).index + " " + sameColor.get(i).color);
 			}
 		}
-		for(int i = 0; i < colors.size(); i++){
+		System.out.println("Nodes checked:" + colors.size());
+		/*for(int i = 0; i < colors.size(); i++){
 			System.out.println(colors.get(i));
-		}
+		}*/
 		
 		return color + 1;
 	}
