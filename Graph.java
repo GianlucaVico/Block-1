@@ -19,6 +19,9 @@ public class Graph {
 	LinkedList<Node> maxDegreeNodes; //if need
 	
 	public Graph(ColEdge[] edges, int numberOfEdges, int verts) {
+		System.out.println("Verts: " + verts);
+		System.out.println("Edges: " + numberOfEdges);
+		Node.allNodes.clear();
 		long startTime = System.nanoTime();
 		this.edges = numberOfEdges;
 		this.verts = verts;
@@ -63,7 +66,10 @@ public class Graph {
 	}
 	
 	private void setComplete(){
-		complete = (edges == verts*(verts -1)/2);
+		if(edges != 0)
+			complete = (edges == verts*(verts -1)/2);
+		else
+			complete = false;
 	}
 
 	private void findLowerBound(){	//update bound values (find bounds algorithm)
@@ -112,6 +118,7 @@ public class Graph {
 	}
 
 	private void reduce() {//node with degree = 1 will be eliminated
+		System.out.println("Before reduction: verts " + verts + " null " + nullGraph + " complete " + complete + " acyclic " + acyclic);
 		boolean reduced = true;
 		Node tmp;
 		while(!(complete || nullGraph) && reduced){
@@ -131,6 +138,7 @@ public class Graph {
 		if(!nullGraph && verts == 0)
 			acyclic = true;
 		setNullGraph();
+		System.out.println("After reduction: verts " + verts + " null " + nullGraph + " complete " + complete + " acyclic " + acyclic);
 	}	
 	
 	private int soleveGeneric(Node start) {
@@ -140,7 +148,7 @@ public class Graph {
 		boolean done = false;
 		LinkedList<Node> notColor = Node.allNodes;
 		LinkedList<Node> sameColor;
-		LinkedList<String> colors = new LinkedList<String>();	//debug
+		//LinkedList<String> colors = new LinkedList<String>();	//debug
 		
 		while(!done){
 			//System.out.println("Start: " + start);
@@ -205,8 +213,8 @@ public class Graph {
 				notColor.remove(start);
 				//color++;
 			}
-/*
-			for(int i = 0; i < sameColor.size(); i++){
+
+			/*for(int i = 0; i < sameColor.size(); i++){
 				colors.add(sameColor.get(i).index + " " + sameColor.get(i).color);
 				System.out.println("Color " + color + ": " + sameColor.get(i));
 			}*/
@@ -223,23 +231,35 @@ public class Graph {
 
 	private int solve() {	//<- algorithm goes here
 		int c = 0;
-		reduce();
-		findUpperBound();
-		findLowerBound();
-		if(acyclic && !nullGraph){
-            c = 2;
-		}else if(complete){
-            c = verts;
-		}else if(nullGraph){
-            c = 1;
-		}else if((minDegree == maxDegree) && (minDegree == 2)){ //single cycle
-			if(verts % 2 == 0){
-                c = 2;
-			}else {
-                c = 3;
-			}
+		//System.out.println("Solving");
+		if(complete){
+			c = verts;
+		}else if (nullGraph){
+			c = 1;
 		}else{
-			c = soleveGeneric(maxDegreeNodes.get(0));
+			reduce();
+			findUpperBound();
+			findLowerBound();
+			if(acyclic){		
+				System.out.println("Acyclic");	
+				c = 2;
+			}else if(complete){
+				System.out.println("Complete");
+				c = verts;
+			}else if(nullGraph){
+				System.out.println("nullGraph");
+				c = 1;
+			}else if((minDegree == maxDegree) && (minDegree == 2)){ //single cycle
+				if(verts % 2 == 0){
+					System.out.println("Even");
+					c = 2;
+				}else {
+					System.out.println("Odd");
+					c = 3;
+				}
+			}else{
+				c = soleveGeneric(maxDegreeNodes.get(0));
+			}
 		}
 		return c;
 	}

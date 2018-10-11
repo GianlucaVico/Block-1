@@ -46,7 +46,7 @@ public class ReadGraph
 					if( record.startsWith("VERTICES = ") )
 						{
 						n = Integer.parseInt( record.substring(11) );		
-						edges = n;
+						verts = n;
 						if(DEBUG) System.out.println(COMMENT + " Number of vertices = "+n);
 						}
 
@@ -57,7 +57,7 @@ public class ReadGraph
 					if( record.startsWith("EDGES = ") )
 						{
 						m = Integer.parseInt( record.substring(8) );					
-						verts = m;
+						edges = m;
 						if(DEBUG) System.out.println(COMMENT + " Expected number of edges = "+m);
 						}
 
