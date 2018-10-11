@@ -1,6 +1,7 @@
 import java.util.LinkedList;
 
 public class Graph {
+	boolean noClique;
 
 	int minDegree;
 	int maxDegree;
@@ -18,11 +19,12 @@ public class Graph {
 	LinkedList<Node> minDegreeNodes; //if need
 	LinkedList<Node> maxDegreeNodes; //if need
 	
-	public Graph(ColEdge[] edges, int numberOfEdges, int verts) {
+	public Graph(ColEdge[] edges, int numberOfEdges, int verts, boolean noClique) {
 		System.out.println("Verts: " + verts);
 		System.out.println("Edges: " + numberOfEdges);
 		Node.allNodes.clear();
 		long startTime = System.nanoTime();
+		this.noClique = noClique;
 		this.edges = numberOfEdges;
 		this.verts = verts;
 		setNullGraph();
@@ -71,29 +73,75 @@ public class Graph {
 		else
 			complete = false;
 	}
-
-	private void findLowerBound(){	//update bound values (find bounds algorithm)
-		if(complete) {
-			minDegree = verts - 1;
-		}else if(nullGraph){
-			minDegree = 0;
-		}else {
-			minDegree = Integer.MAX_VALUE;
-			minDegreeNodes.clear();
-			for(int i = 0; i < Node.allNodes.size(); i++){
-				if(Node.allNodes.get(i).getDegree() < minDegree){
-					minDegree = Node.allNodes.get(i).getDegree();
-					minDegreeNodes.clear();
-				}
-				if(Node.allNodes.get(i).getDegree() == minDegree){
-					minDegreeNodes.add(Node.allNodes.get(i));
-				}
-			}
-			if(minDegree == Integer.MAX_VALUE){
-				minDegree = 0;
+	
+	private LinkedList<Node> intersection(LinkedList<Node> l1, LinkedList<Node> l2){
+		LinkedList<Node> inter = new LinkedList<Node>();
+		for(int i = 0; i < l1.size(); i++){
+			if(l2.indexOf(l1.get(i)) != -1){
+				inter.add(l1.get(i));
 			}
 		}
-		
+		return inter;
+	}
+	private LinkedList<Node> union(LinkedList<Node> l1, Node n ){
+		LinkedList<Node> un = new LinkedList<Node>();
+		for(int i = 0; i < l1.size(); i++){
+			un.add(l1.get(i));
+		}
+		un.add(n);
+		return un;
+	}
+	private void bronKerbosch(LinkedList<Node> clique, LinkedList<Node> possible, LinkedList<Node> not, LinkedList<Integer> cliques){
+		if(possible.size() == 0 && not.size() == 0) {
+			cliques.add(clique.size());
+		}else{
+			LinkedList<Node> neighbours;
+			
+			for(int i = 0; i < possible.size(); i++){
+				neighbours = new LinkedList<Node>();
+				for(int j = 0; j < possible.get(i).getDegree(); j++){
+					neighbours.add(possible.get(i).getChild(j));
+				}
+				bronKerbosch(union(clique, possible.get(i)), intersection(possible, neighbours), intersection(not, neighbours), cliques);
+				not.add(possible.get(i));
+				possible.remove(possible.get(i));
+			}
+		}
+	}
+	private void findLowerBound(){	//update bound values (find bounds algorithm)
+		if(complete) {
+			minDegree = verts;
+		}else if(nullGraph){
+			minDegree = 0;
+		}else if(noClique){
+				minDegree = Integer.MAX_VALUE;
+				minDegreeNodes.clear();
+				for(int i = 0; i < Node.allNodes.size(); i++){
+					if(Node.allNodes.get(i).getDegree() < minDegree){
+						minDegree = Node.allNodes.get(i).getDegree();
+						minDegreeNodes.clear();
+					}
+					if(Node.allNodes.get(i).getDegree() == minDegree){
+						minDegreeNodes.add(Node.allNodes.get(i));
+					}
+				}
+				if(minDegree == Integer.MAX_VALUE){
+					minDegree = 0;
+				}
+		}else{
+			LinkedList<Node> clone = new LinkedList<Node>();
+			for(int i = 0; i < Node.allNodes.size(); i++){
+				clone.add(Node.allNodes.get(i));
+			}
+			LinkedList<Integer> cliques = new LinkedList<Integer>();
+			bronKerbosch(new LinkedList<Node>(), clone, new LinkedList<Node>(), cliques);
+			minDegree = 0;
+			for(int i = 0; i < cliques.size(); i++){
+				if(cliques.get(i) > minDegree)
+					minDegree = cliques.get(i);
+			}
+			System.out.println("Max clique: " + minDegree);
+		}
 	}
 	
 	private void findUpperBound(){	//update bound values (find bounds algorithm)
@@ -114,6 +162,8 @@ public class Graph {
 					maxDegreeNodes.add(Node.allNodes.get(i));
 				}
 			}
+			if(!noClique)
+				maxDegree = (int)Math.round(((double)(minDegree + maxDegree + 1))/2);
 		}
 	}
 
@@ -193,17 +243,8 @@ public class Graph {
 			}while(maxConflict != 0);
 
 			//check ending
-			if(notColor.size() < 2){	//it works somethimes but idk why
-				done = true;	//////////////////////////////////////
-				/*System.out.println("Stopping: " + notColor.size());	//////////////////////////////////////
-				System.out.println(Node.allNodes.size());
-				if(notColor.size() == 2 && notColor.get(0).isNeighbour(notColor.get(1))){ //////////////////////////////////////
-					System.out.println("Neighbours " + notColor.get(0).index + " " + notColor.get(1).index + ": " + notColor.get(0).isNeighbour(notColor.get(1)));//////////////////////////////////////
-					color++;
-					//	color += 2;//////////////////////////////////////
-				}else{	//////////////////////////////////////
-				//	color++;	//////////////////////////////////////	
-				}*/
+			if(notColor.size() < 2){	
+				done = true;
 			}else{
 				int i = 0;
 				while(i < notColor.size() && notColor.get(i).test)
@@ -213,19 +254,8 @@ public class Graph {
 				notColor.remove(start);
 				//color++;
 			}
-
-			/*for(int i = 0; i < sameColor.size(); i++){
-				colors.add(sameColor.get(i).index + " " + sameColor.get(i).color);
-				System.out.println("Color " + color + ": " + sameColor.get(i));
-			}*/
-			
 			color++;
 		}
-		/*
-		for(int i = 0; i < colors.size(); i++){
-			System.out.println(colors.get(i));
-		}*/
-		
 		return color;
 	}
 
@@ -238,8 +268,8 @@ public class Graph {
 			c = 1;
 		}else{
 			reduce();
+			//findLowerBound();
 			findUpperBound();
-			findLowerBound();
 			if(acyclic){		
 				System.out.println("Acyclic");	
 				c = 2;
