@@ -14,8 +14,6 @@ public class Graph {
 	boolean nullGraph = false;
 	boolean acyclic = false;
 	
-	LinkedList<Graph> subgraph;	//if need
-	
 	LinkedList<Node> minDegreeNodes; //if need
 	LinkedList<Node> maxDegreeNodes; //if need
 	
@@ -288,7 +286,10 @@ public class Graph {
 					c = 3;
 				}
 			}else{
-				c = soleveGeneric(maxDegreeNodes.get(0));
+				if(!noClique && maxDegree == minDegree)
+					c = minDegree;
+				else
+					c = soleveGeneric(maxDegreeNodes.get(0));
 			}
 		}
 		return c;
