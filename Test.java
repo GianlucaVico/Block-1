@@ -26,14 +26,17 @@ public class Test{
 				if(args.length == 1)
 					e = ReadGraph.getEdges("allGraphs2018\\graph.txt");
 				else
-					e = ReadGraph.getEdges("allGraphs2018\\graph" + args[1	] + ".txt");
+					e = ReadGraph.getEdges(args[1]);
 				Graph g = new Graph(e, ReadGraph.edges, ReadGraph.verts, noClique);
 				System.out.println("Chromatic number: " + g.getChromaticNumber());
 				System.out.println("Lower bound: " + g.getBounds()[0]);
 				System.out.println("Upper bound: " + g.getBounds()[1]);
 			}else if (args[0].equals("method2")){
-				method2.run("allGraphs2018\\graph" + args[1] + ".txt");
+				method2.run(args[1]);
 			}
+		}else{
+			System.out.println("java Test [method1 | method2] [all | <graph name>] [clique]");
+			System.out.println("Clique: compute lower bound with a working but still slow algorithm");
 		}
 	}
 }
