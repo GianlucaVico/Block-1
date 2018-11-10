@@ -8,27 +8,31 @@ public class Graph {
 	private int size;
 	private boolean hasTrivialSolution;
 	private int trivialSolution;
-	private int trivialUpperBount;
+	private int trivialUpperBound;
 	private int trivialLowerBound;
 	private int minDegree;
 	private int maxDegree;
 	private boolean reduced;
 	private boolean complete;
 	private boolean nullGraph;
+	private boolean cyclic;
 	private boolean toUpdate;
+	private boolean acyclic;
 	
-	private Graph(int size) {
-		this.size = size
+	private void init(int size) {
+		this.size = size;
 		minDegree = Integer.MAX_VALUE;
 		maxDegree = -1;
 		toUpdate = true;
 		edges = rawData.length;
-		hasTrivialSolution = false;
+		hasTrivialSolution = false;	//TODO
 		trivialSolution = -1;	//TODO
 		trivialUpperBound = -1;	//TODO
 		trivialLowerBound = -1;	//TODO
 		reduced = false;	//TODO
 		complete = (edges ==(size)*(size - 1) / 2);
+		cyclic = false; //TODO
+		acyclic = false; //TODO
 		nodes = new Node[size];
 		nullGraph = nodes.length == 0;
 		
@@ -37,103 +41,140 @@ public class Graph {
 		}
 		
 		for(int i = 0; i < edges; i++) {
-			nodes[rawData[i][0]].addChild(rawData[i][1]);
-			nodes[rawData[i][1]].addChild(rawData[i][0]);
+			nodes[rawData[i][0]].addChild(nodes[rawData[i][1]]);
+			nodes[rawData[i][1]].addChild(nodes[rawData[i][0]]);
 		}
 	}
+	private Graph(int size) {init(size);}
 	
 	//graph from file
 	public Graph(String fileName) {
-		ReadGraph rg = ReadGraph();
+		ReadGraph rg = new ReadGraph();
 		ColEdge[] ce = rg.getEdges(fileName);
 
 		rawData = new int[ce.length][2];
 		
 		for(int i = 0; i < rawData.length; i++){
-			rawData[i] = {ce[i].u, ce[i].v};
+			rawData[i] = new int[]{ce[i].u, ce[i].v};
 		}
 		
-		Graph(size);
+		init(size);
 	}
 	
 	//random graph from size and edge number
 	public Graph(int size, int edges) {
 		rawData = new int[edges][2];
 		for(int i = 0; i < edges; i++) {
-			rawData[i] = {Math.random()*size + 1, Math.random()*size + 1};
+			rawData[i] = new int[]{(int)(Math.random()*size + 1), (int)(Math.random()*size + 1)};
 		}
-		Graph(size);
+		init(size);
 	}
 	
 	//graph from edges
 	public Graph(int[][] edges, int size) {
 		rawData = edges;
-		Graph(size);
+		init(size);
 	}
 	
 	//return a copy of this graph
 	public Graph clone() {
-		newGraph = new Graph(this.size);
+		Graph newGraph = new Graph(this.size);
 		//TODO
 		return newGraph;
 	}
 	
 	//is there a trivial solution?
 	public boolean isTrivial() {
-		if(complete || nullGraph || (getMinDegree() == getMaxDegree() && getMaxDegree() == 2)	//complete - null - cyclic
+		if(complete || nullGraph || cyclic || acyclic)	//complete - null - cyclic
 			hasTrivialSolution = true;
 		else
 			hasTrivialSolution = false;
+		return hasTrivialSolution;
 	}
-	public int trivialSolution() {}
+	
+	
+	public int trivialSolution() {
+		int solution = 0;
+		if(complete)
+			solution = size;
+		else if(nullGraph)
+			solution = 1;
+		else if(cyclic){
+			if (size % 2 == 0)
+				solution = 2;
+			else
+				solution = 3;
+		}
+		return solution;
+	}
+	
+	public int trivialUpperBound() {	//DONE
+		int bound = 0;
+		if(isTrivial())
+			bound = trivialSolution();
+		else
+			bound = getMaxDegree() + 1;
+		return bound;
+	}
+	
+	public int trivialLowerBound() {	//DONE
+		int bound = 0;
+		if(isTrivial())
+			bound = trivialSolution();
+		else
+			bound = 3;
+		return bound;
+	}
 	
 	//number of nodes
 	public int getSize() {
-		return nodes.length;
+		return size;
 	}
 	
 	//get a node
-	public Node getNode(int num) {
+	public Node getNode(int num) {	//DONE
 		Node node;
 		if(num < 0 || num >= nodes.length)
 			node = null;
 		else
 			node = nodes[num];	
+		return node;
 	}
 	
 	public int getEdges() {
-		return endges;
+		return edges;
 	}
 	
-	private updateDegrees() {
+	private void updateDegrees() {
 		toUpdate = false;
 		maxDegree = -1;
 		minDegree = Integer.MAX_VALUE;
 		for(Node i : nodes) {
 			maxDegree = Math.max(maxDegree, i.getDegree());
-			minDegree = Math.(minDegree, i.getDegree());
+			minDegree = Math.min(minDegree, i.getDegree());
 		}
 	}
 	
-	public int getMaxDegree() {
+	public int getMaxDegree() {	//DONE
 		if(toUpdate)
-			updateDegree();
+			updateDegrees();
 		return maxDegree;
 	}
 	
-	public int getMinDegree() {
+	public int getMinDegree() {	//DONE
 		if(toUpdate)
-			updateDegree();
+			updateDegrees();
 		return maxDegree;
 	}
 }
 
-private class ColEdge {
+//internal stuffs
+class ColEdge {
 	int u;
 	int v;
 }
 
-private class ReadGraph
+class ReadGraph
 		{
 		
 		public final static boolean DEBUG = false;
