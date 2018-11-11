@@ -6,36 +6,25 @@ public class Graph {
 	private int[][] rawData;
 	private int edges;
 	private int size;
-	private boolean hasTrivialSolution;
-	private int trivialSolution;
-	private int trivialUpperBound;
-	private int trivialLowerBound;
+	//private boolean hasTrivialSolution;
+	//private int trivialSolution;
+	//private int trivialUpperBound;
+	//private int trivialLowerBound;
 	private int minDegree;
 	private int maxDegree;
-	private boolean reduced;
+	private boolean reduced;	//TODO useless
 	private boolean complete;
 	private boolean nullGraph;
 	private boolean cyclic;
-	private boolean toUpdate;
+	private boolean toUpdate;	//TODO useless
 	private boolean acyclic;
 	
-	private void init(int size) {
+	private void init(int size) {	//TODO optimize initialization order
 		this.size = size;
-		minDegree = Integer.MAX_VALUE;
-		maxDegree = -1;
-		toUpdate = true;
+		toUpdate = true;	//TODO useless
 		edges = rawData.length;
-		hasTrivialSolution = false;	//TODO
-		trivialSolution = -1;	//TODO
-		trivialUpperBound = -1;	//TODO
-		trivialLowerBound = -1;	//TODO
-		reduced = false;	//TODO
-		complete = (edges ==(size)*(size - 1) / 2);
-		cyclic = false; //TODO
-		acyclic = false; //TODO
-		nodes = new Node[size];
-		nullGraph = nodes.length == 0;
 		
+		nodes = new Node[size];
 		for(int i = 0; i < size; i++) {
 			nodes[i] = new Node(i);
 		}
@@ -44,7 +33,25 @@ public class Graph {
 			nodes[rawData[i][0]].addChild(nodes[rawData[i][1]]);
 			nodes[rawData[i][1]].addChild(nodes[rawData[i][0]]);
 		}
+		nullGraph = edges == 0;
+		
+		reduce();
+		updateDegrees();
+		//minDegree = getMaxDegree();
+		//maxDegree = getMinDegree()
+		
+		//reduced = false;	//TODO
+		complete = (edges ==(size)*(size - 1) / 2);
+		cyclic = ((minDegree == maxDegree) && (maxDegree == 2));
+		acyclic = (nodes.length == 0); 
+	
+		//hasTrivialSolution = false;	//TODO
+		//isTrivial()
+		//trivialSolution = -1;	//TODO
+		//trivialUpperBound = -1;	//TODO
+		//trivialLowerBound = -1;	//TODO
 	}
+	
 	private Graph(int size) {init(size);}
 	
 	//graph from file
@@ -58,7 +65,7 @@ public class Graph {
 			rawData[i] = new int[]{ce[i].u, ce[i].v};
 		}
 		
-		init(size);
+		init(rg.verts); 
 	}
 	
 	//random graph from size and edge number
@@ -85,10 +92,11 @@ public class Graph {
 	
 	//is there a trivial solution?
 	public boolean isTrivial() {
+		boolean hasTrivialSolution = false;
 		if(complete || nullGraph || cyclic || acyclic)	//complete - null - cyclic
 			hasTrivialSolution = true;
-		else
-			hasTrivialSolution = false;
+		/*else
+			hasTrivialSolution = false;*/
 		return hasTrivialSolution;
 	}
 	
@@ -104,7 +112,8 @@ public class Graph {
 				solution = 2;
 			else
 				solution = 3;
-		}
+		}else if(acyclic)
+			solution = 2;
 		return solution;
 	}
 	
@@ -146,26 +155,36 @@ public class Graph {
 	}
 	
 	private void updateDegrees() {
-		toUpdate = false;
-		maxDegree = -1;
-		minDegree = Integer.MAX_VALUE;
-		for(Node i : nodes) {
-			maxDegree = Math.max(maxDegree, i.getDegree());
-			minDegree = Math.min(minDegree, i.getDegree());
+		if(nullGraph) {
+			maxDegree = 0;
+			minDegree = 0;
+		}else{
+			toUpdate = false;
+			maxDegree = -1;
+			minDegree = Integer.MAX_VALUE;
+			for(Node i : nodes) {
+				maxDegree = Math.max(maxDegree, i.getDegree());
+				minDegree = Math.min(minDegree, i.getDegree());
+			}
 		}
 	}
 	
-	public int getMaxDegree() {	//DONE
-		if(toUpdate)
-			updateDegrees();
+	public int getMaxDegree() {	
+	/*	if(toUpdate)
+			updateDegrees();*/
 		return maxDegree;
 	}
 	
-	public int getMinDegree() {	//DONE
-		if(toUpdate)
-			updateDegrees();
+	public int getMinDegree() {	
+	/*	if(toUpdate)
+			updateDegrees();*/
 		return maxDegree;
 	}
+	
+	private void reduce() {	//TODO
+		if(!reduced){}
+	}
+
 }
 
 //internal stuffs
