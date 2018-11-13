@@ -12,16 +12,16 @@ public class Graph {
 	//private int trivialLowerBound;
 	private int minDegree;
 	private int maxDegree;
-	private boolean reduced;	//TODO useless
+	//private boolean reduced;	//TODO useless
 	private boolean complete;
 	private boolean nullGraph;
 	private boolean cyclic;
-	private boolean toUpdate;	//TODO useless
+	//private boolean toUpdate;	//TODO useless
 	private boolean acyclic;
 	
 	private void init(int size) {	//TODO optimize initialization order
 		this.size = size;
-		toUpdate = true;	//TODO useless
+		//toUpdate = true;	//TODO useless
 		edges = rawData.length;
 		
 		nodes = new Node[size];
@@ -30,8 +30,8 @@ public class Graph {
 		}
 		
 		for(int i = 0; i < edges; i++) {
-			nodes[rawData[i][0]].addChild(nodes[rawData[i][1]]);
-			nodes[rawData[i][1]].addChild(nodes[rawData[i][0]]);
+			nodes[rawData[i][0] - 1].addChild(nodes[rawData[i][1] - 1]);
+			nodes[rawData[i][1] - 1].addChild(nodes[rawData[i][0] - 1]);
 		}
 		nullGraph = edges == 0;
 		
@@ -50,6 +50,7 @@ public class Graph {
 		//trivialSolution = -1;	//TODO
 		//trivialUpperBound = -1;	//TODO
 		//trivialLowerBound = -1;	//TODO
+		System.out.println("Done");
 	}
 	
 	private Graph(int size) {init(size);}
@@ -70,8 +71,9 @@ public class Graph {
 	
 	//random graph from size and edge number
 	public Graph(int size, int edges) {
+		edges = Math.min(edges, size*(size - 1)/2);
 		rawData = new int[edges][2];
-		for(int i = 0; i < edges; i++) {
+		for(int i = 0; i < edges; i++) {	//TODO check doubles
 			rawData[i] = new int[]{(int)(Math.random()*size + 1), (int)(Math.random()*size + 1)};
 		}
 		init(size);
@@ -99,7 +101,6 @@ public class Graph {
 			hasTrivialSolution = false;*/
 		return hasTrivialSolution;
 	}
-	
 	
 	public int trivialSolution() {
 		int solution = 0;
@@ -159,7 +160,7 @@ public class Graph {
 			maxDegree = 0;
 			minDegree = 0;
 		}else{
-			toUpdate = false;
+			//toUpdate = false;
 			maxDegree = -1;
 			minDegree = Integer.MAX_VALUE;
 			for(Node i : nodes) {
@@ -181,10 +182,9 @@ public class Graph {
 		return maxDegree;
 	}
 	
-	private void reduce() {	//TODO
-		if(!reduced){}
+	private void reduce() {	//TODO node.remove?
+	
 	}
-
 }
 
 //internal stuffs
