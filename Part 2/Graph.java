@@ -1,29 +1,27 @@
 import java.io.*;
 import java.util.*;
+import java.util.LinkedList;
 
 public class Graph {
 	private Node[] nodes;
 	private int[][] rawData;
 	private int edges;
 	private int size;
-	//private boolean hasTrivialSolution;
-	//private int trivialSolution;
-	//private int trivialUpperBound;
-	//private int trivialLowerBound;
 	private int minDegree;
 	private int maxDegree;
-	//private boolean reduced;	//TODO useless
 	private boolean complete;
 	private boolean nullGraph;
 	private boolean cyclic;
-	//private boolean toUpdate;	//TODO useless
 	private boolean acyclic;
+	
+	//TODO finish reduction
+	//by reduction effects
+	private LinkedList<Node> removed;	//1 reduction: -1 edge, -1 nodes 
 	
 	private void init(int size) {	//TODO optimize initialization order
 		this.size = size;
-		//toUpdate = true;	//TODO useless
 		edges = rawData.length;
-		
+		removed = new LinkedList<Node>();
 		nodes = new Node[size];
 		for(int i = 0; i < size; i++) {
 			nodes[i] = new Node(i);
@@ -37,19 +35,11 @@ public class Graph {
 		
 		reduce();
 		updateDegrees();
-		//minDegree = getMaxDegree();
-		//maxDegree = getMinDegree()
 		
-		//reduced = false;	//TODO
 		complete = (edges ==(size)*(size - 1) / 2);
 		cyclic = ((minDegree == maxDegree) && (maxDegree == 2));
 		acyclic = (nodes.length == 0); 
-	
-		//hasTrivialSolution = false;	//TODO
-		//isTrivial()
-		//trivialSolution = -1;	//TODO
-		//trivialUpperBound = -1;	//TODO
-		//trivialLowerBound = -1;	//TODO
+		
 		System.out.println("Done");
 	}
 	
@@ -73,22 +63,35 @@ public class Graph {
 	public Graph(int size, int edges) {
 		edges = Math.min(edges, size*(size - 1)/2);
 		rawData = new int[edges][2];
-		for(int i = 0; i < edges; i++) {	//TODO check doubles
-			rawData[i] = new int[]{(int)(Math.random()*size + 1), (int)(Math.random()*size + 1)};
+		int u,v,c;
+		boolean d;
+		for(int i = 0; i < edges; i++) {
+			do{
+				d = false;
+				u = (int)(Math.random()*size + 1);
+				v = (int)(Math.random()*size + 1);
+				c = 0;
+				while(c < i && !d){
+					if((rawData[c][0] == u && rawData[c][1] == v) || (rawData[c][0] == v && rawData[c][1] == u))
+						d = true;
+					c++;
+				}
+			}while(d);
+			
+			rawData[i] = new int[]{u, v};
 		}
 		init(size);
 	}
 	
 	//graph from edges
 	public Graph(int[][] edges, int size) {
-		rawData = edges;
+		rawData = edges.clone();
 		init(size);
 	}
 	
 	//return a copy of this graph
 	public Graph clone() {
-		Graph newGraph = new Graph(this.size);
-		//TODO
+		Graph newGraph = new Graph(this.rawData, this.size);
 		return newGraph;
 	}
 	
@@ -97,17 +100,15 @@ public class Graph {
 		boolean hasTrivialSolution = false;
 		if(complete || nullGraph || cyclic || acyclic)	//complete - null - cyclic
 			hasTrivialSolution = true;
-		/*else
-			hasTrivialSolution = false;*/
 		return hasTrivialSolution;
 	}
 	
 	public int trivialSolution() {
 		int solution = 0;
-		if(complete)
-			solution = size;
-		else if(nullGraph)
+		if(nullGraph)
 			solution = 1;
+		else if(complete)
+			solution = size;
 		else if(cyclic){
 			if (size % 2 == 0)
 				solution = 2;
@@ -164,26 +165,57 @@ public class Graph {
 			maxDegree = -1;
 			minDegree = Integer.MAX_VALUE;
 			for(Node i : nodes) {
-				maxDegree = Math.max(maxDegree, i.getDegree());
-				minDegree = Math.min(minDegree, i.getDegree());
+				if(!removed.contains(i)) {
+					maxDegree = Math.max(maxDegree, i.getDegree() - countRemovedChildren(i));
+					minDegree = Math.min(minDegree, i.getDegree() - countRemovedChildren(i));
+				}
 			}
+			if(maxDegree == -1)
+				maxDegree = 0;
+			if(minDegree == Integer.MAX_VALUE)
+				minDegree = 0;
 		}
 	}
 	
 	public int getMaxDegree() {	
-	/*	if(toUpdate)
-			updateDegrees();*/
 		return maxDegree;
 	}
 	
 	public int getMinDegree() {	
-	/*	if(toUpdate)
-			updateDegrees();*/
 		return maxDegree;
 	}
 	
 	private void reduce() {	//TODO node.remove?
+		boolean changes = true;
+		
+		LinkedList<Node> l = new LinkedList<Node>();
+		for(int i = 0; i < nodes.length; i++) {
+			l.add(nodes[i]);
+		}
+		
+		while(changes) {
+			changes = false;
+			for(int i = 0; i < l.size(); i++) {
+				if(l.get(i).getDegree() - countRemovedChildren(l.get(i)) <= 1){
+					removed.add(l.get(i));
+					l.remove(i);
+					changes = true;
+				}
+			}
+		}
+	}
 	
+	private int countRemovedChildren(Node n) {
+		int r = 0;
+		for(int i = 0; i < n.getDegree(); i++) {
+			if(removed.contains(n.getChild(i)))
+				r++;
+		}
+		return r;
+	}
+	
+	public Node[] getNodes() {
+		return nodes;
 	}
 }
 
