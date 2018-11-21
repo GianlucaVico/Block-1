@@ -35,6 +35,10 @@ public class Node {
 		return adj.get(number);
 	}
 	
+	public LinkedList<Node> getChildren() {
+		return adj;
+	}
+	
 	//add a child to this Node
 	public void addChild(Node child) {
 		if(!adj.contains(child)) {

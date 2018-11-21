@@ -38,7 +38,7 @@ public class Graph {
 		
 		complete = (edges ==(size)*(size - 1) / 2);
 		cyclic = ((minDegree == maxDegree) && (maxDegree == 2));
-		acyclic = (nodes.length == 0); 
+		acyclic = (removed.size() == nodes.length); 
 		
 		System.out.println("Done");
 	}
