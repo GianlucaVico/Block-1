@@ -19,10 +19,10 @@ public class LowerBound implements Solver {
 			if(g.isTrivial())
 				solution = g.trivialLowerBound();
 			else {
-				LinkedList<Node> R = new LinkedList<Node>();
-				LinkedList<Node> P = new LinkedList<Node>();
-				LinkedList<Node> X = new LinkedList<Node>();
-				LinkedList<LinkedList<Node>> res = new LinkedList<LinkedList<Node>>();
+				LinkedList<Node> R = new LinkedList<Node>();	//current clique
+				LinkedList<Node> P = new LinkedList<Node>();	//possible nodes for the clique
+				LinkedList<Node> X = new LinkedList<Node>();	//used nodes
+				LinkedList<LinkedList<Node>> res = new LinkedList<LinkedList<Node>>();	//list of cliques
 				Node[] nodes = g.getNodes();
 				for(int i = 0; i < nodes.length; i++) {
 					P.add(nodes[i]);
@@ -44,17 +44,6 @@ public class LowerBound implements Solver {
 			res.add(R);
 			return;
 		}
-		/*Node maxLinked = P.get(0);
-		int common = intersect(maxLinked.getChildren(), union(P, X)).size(), tmp = 0;
-		//pivot: maxLinked is the node with most connection, so his children will be added to the clique the next recursion
-		for(Node n : union(P, X)) {
-			tmp = intersect(n.getChildren(), union(P, X)).size();
-			if(tmp > common){
-				common = tmp;
-				maxLinked = n;
-			}
-		}*/
-		
 		//next recursion
 		//for(Node n: diff(P, maxLinked.getChildren())) {
 		for(Node n: (LinkedList<Node>)P.clone()) {
@@ -98,10 +87,6 @@ public class LowerBound implements Solver {
 			l4 = (LinkedList<Node>)l1.clone();
 			l3 = (LinkedList<Node>)l2.clone();
 		}
-		/*for(Node n : l3)
-			if(!l4.contains(n))
-				l3.remove(n);
-		return l3;*/
 		ListIterator<Node> it = l3.listIterator(0);
 		while(it.hasNext()) {
 			if(!l4.contains(it.next()))

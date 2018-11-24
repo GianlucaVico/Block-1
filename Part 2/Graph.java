@@ -13,8 +13,8 @@ public class Graph {
 	private boolean nullGraph;
 	private boolean cyclic;
 	private boolean acyclic;
+	private LinkedList<Graph> subgraphs;
 	
-	//TODO finish reduction
 	//by reduction effects
 	private LinkedList<Node> removed;	//1 reduction: -1 edge, -1 nodes 
 	
@@ -22,6 +22,9 @@ public class Graph {
 		this.size = size;
 		edges = rawData.length;
 		removed = new LinkedList<Node>();
+		subgraphs = new LinkedList<Graph>();
+		
+		//make nodes and their conncetions
 		nodes = new Node[size];
 		for(int i = 0; i < size; i++) {
 			nodes[i] = new Node(i);
@@ -31,19 +34,22 @@ public class Graph {
 			nodes[rawData[i][0] - 1].addChild(nodes[rawData[i][1] - 1]);
 			nodes[rawData[i][1] - 1].addChild(nodes[rawData[i][0] - 1]);
 		}
+		
+		setProperties();
+		findSubgraphs();
+	}
+	
+	private void setProperties() {
 		nullGraph = edges == 0;
 		
 		reduce();
 		updateDegrees();
 		
-		complete = (edges ==(size)*(size - 1) / 2);
+		//TODO recount edges and size after reductions
+		complete = (edges ==(size)*(size - 1) / 2);	
 		cyclic = ((minDegree == maxDegree) && (maxDegree == 2));
-		acyclic = (removed.size() == nodes.length); 
-		
-		System.out.println("Done");
+		acyclic = (removed.size() == nodes.length);
 	}
-	
-	private Graph(int size) {init(size);}
 	
 	//graph from file
 	public Graph(String fileName) {
@@ -89,6 +95,28 @@ public class Graph {
 		init(size);
 	}
 	
+	//graph from nose list
+	public Graph(Node[] n) {
+		size = n.length;
+		LinkedList<int[]> tmpRawData = new LinkedList<int[]>();
+		for(int i = 0; i < n.length; i++) {
+			for(Node j: n[i].getChildren()){
+				if (n[i].getId() < j.getId()) {
+					tmpRawData.add(new int[]{n[i].getId(), j.getId()});
+				}
+			}
+		}
+		rawData = new int[tmpRawData.size()][2];
+		for(int i = 0; i < tmpRawData.size(); i++) {
+			rawData[i] = tmpRawData.get(i);
+		}
+		nodes = n;
+		edges = rawData.length;
+		removed = new LinkedList<Node>();
+		subgraphs = new LinkedList<Graph>();
+		setProperties();
+	}
+	
 	//return a copy of this graph
 	public Graph clone() {
 		Graph newGraph = new Graph(this.rawData, this.size);
@@ -96,14 +124,14 @@ public class Graph {
 	}
 	
 	//is there a trivial solution?
-	public boolean isTrivial() {
+	public boolean isTrivial() {	//TODO check subgraphs
 		boolean hasTrivialSolution = false;
 		if(complete || nullGraph || cyclic || acyclic)	//complete - null - cyclic
 			hasTrivialSolution = true;
 		return hasTrivialSolution;
 	}
 	
-	public int trivialSolution() {
+	public int trivialSolution() {	//TODO check subgraphs
 		int solution = 0;
 		if(nullGraph)
 			solution = 1;
@@ -119,7 +147,7 @@ public class Graph {
 		return solution;
 	}
 	
-	public int trivialUpperBound() {	//DONE
+	public int trivialUpperBound() {	//TODO check subgraphs
 		int bound = 0;
 		if(isTrivial())
 			bound = trivialSolution();
@@ -128,7 +156,7 @@ public class Graph {
 		return bound;
 	}
 	
-	public int trivialLowerBound() {	//DONE
+	public int trivialLowerBound() {	//TODO check subgraphs
 		int bound = 0;
 		if(isTrivial())
 			bound = trivialSolution();
@@ -143,7 +171,7 @@ public class Graph {
 	}
 	
 	//get a node
-	public Node getNode(int num) {	//DONE
+	public Node getNode(int num) {	
 		Node node;
 		if(num < 0 || num >= nodes.length)
 			node = null;
@@ -161,7 +189,6 @@ public class Graph {
 			maxDegree = 0;
 			minDegree = 0;
 		}else{
-			//toUpdate = false;
 			maxDegree = -1;
 			minDegree = Integer.MAX_VALUE;
 			for(Node i : nodes) {
@@ -185,18 +212,18 @@ public class Graph {
 		return maxDegree;
 	}
 	
-	private void reduce() {	//TODO node.remove?
-		boolean changes = true;
+	private void reduce() {	
+		boolean changes = true;		//stop when cannot remove any node
 		
-		LinkedList<Node> l = new LinkedList<Node>();
+		LinkedList<Node> l = new LinkedList<Node>();	//list of node in the graph
 		for(int i = 0; i < nodes.length; i++) {
 			l.add(nodes[i]);
 		}
 		
-		while(changes) {
+		while(changes) {	
 			changes = false;
 			for(int i = 0; i < l.size(); i++) {
-				if(l.get(i).getDegree() - countRemovedChildren(l.get(i)) <= 1){
+				if(l.get(i).getDegree() - countRemovedChildren(l.get(i)) <= 1){	//exclude removed children node
 					removed.add(l.get(i));
 					l.remove(i);
 					changes = true;
@@ -214,8 +241,56 @@ public class Graph {
 		return r;
 	}
 	
+	private void findSubgraphs() {
+		if(size != 0) {
+			boolean[] mask = new boolean[size];	//false: not done, true: done
+			int done = 0;	
+			LinkedList<Node[]> groups = new LinkedList<Node[]>();	//list of nodes in the same subgraph
+			
+			do{
+				int i = 0;
+				while(i < mask.length && mask[i]){	//find the first node not done
+					i++;
+				}
+				mask[i] = true;
+				//current node: find all its relatives, remaining nodes are in another subgraph
+				LinkedList<Node> group = findRelatives(nodes[i], mask);
+				group.add(nodes[i]);
+				done += group.size();
+				groups.add(group.toArray(new Node[group.size()]));
+			}while(done < size);
+			
+			if(groups.size() == 1) {
+				subgraphs.add(this);
+			}else{
+				for(int i = 0; i < groups.size(); i++) {
+					subgraphs.add(new Graph(groups.get(i)));
+				}	
+			}
+		}
+	}
+	private LinkedList<Node> findRelatives(Node n, boolean[] mask) {
+		LinkedList<Node> relatives = new LinkedList<Node>();
+		for(Node child : n.getChildren()) {
+			if(!mask[child.getId()]){			//if not done yet
+				mask[child.getId()] = true;
+				relatives.add(child);
+				relatives.addAll(findRelatives(child, mask));
+			}
+		}
+		return relatives;
+	}
+	
 	public Node[] getNodes() {
 		return nodes;
+	}
+	
+	public int countSubgraphs() {
+		return subgraphs.size();
+	}
+	
+	public Graph getSubgraph(int i) {
+		return subgraphs.get(i);
 	}
 }
 
