@@ -1,4 +1,4 @@
-import java.util.LinkedList;
+import java.util.LinkedList; 
 
 public class Node {
 	private int id;
@@ -7,6 +7,7 @@ public class Node {
 	
 	//constructor
 	public Node(int id) {
+		this.color = -1;
 		this.id = id;
 		this.adj = new LinkedList<Node>();
 	}

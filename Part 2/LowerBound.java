@@ -2,98 +2,98 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 public class LowerBound implements Solver {
-	private Graph g;
-	private int solution;
+    private Graph g;
+    private int solution;
+
+    public LowerBound(Graph g) {
+        this.g = g;
+        solution = -1;
+    }
+
+    public Graph getGraph() {
+        return g;
+    }
+    //return the solution
+    public int solve() {
+        if (solution == -1){
+            if(g.isTrivial())
+                solution = g.trivialLowerBound();
+            else {
+                LinkedList<Node> R = new LinkedList<Node>();	//current clique
+                LinkedList<Node> P = new LinkedList<Node>();	//possible nodes for the clique
+                LinkedList<Node> X = new LinkedList<Node>();	//used nodes
+                LinkedList<LinkedList<Node>> res = new LinkedList<LinkedList<Node>>();	//list of cliques
+                Node[] nodes = g.getNodes();
+                for(int i = 0; i < nodes.length; i++) {
+                    P.add(nodes[i]);
+                }
+                findClique(R,P,X, res);
+                for(int i = 0; i < res.size(); i++) {
+                    if(res.get(i).size() > solution)
+                        solution = res.get(i).size();
+                }
+            }
+        }
+        return solution;
+    }
 	
-	public LowerBound(Graph g) {
-		this.g = g;
-		solution = -1;
-	}
-	
-	public Graph getGraph() {
-		return g;
-	}
-	//return the solution
-	public int solve() {
-		if (solution == -1){
-			if(g.isTrivial())
-				solution = g.trivialLowerBound();
-			else {
-				LinkedList<Node> R = new LinkedList<Node>();	//current clique
-				LinkedList<Node> P = new LinkedList<Node>();	//possible nodes for the clique
-				LinkedList<Node> X = new LinkedList<Node>();	//used nodes
-				LinkedList<LinkedList<Node>> res = new LinkedList<LinkedList<Node>>();	//list of cliques
-				Node[] nodes = g.getNodes();
-				for(int i = 0; i < nodes.length; i++) {
-					P.add(nodes[i]);
-				}
-				findClique(R,P,X, res);
-				for(int i = 0; i < res.size(); i++) {
-					if(res.get(i).size() > solution)
-						solution = res.get(i).size();
-				}
-			}
-		}
-		return solution;
-	}
-	
-	private void findClique(LinkedList<Node> R, LinkedList<Node> P, LinkedList<Node> X, LinkedList<LinkedList<Node>> res) {
-		//stop
-		if(P.isEmpty() && X.isEmpty()) {
-			//return;
-			res.add(R);
-			return;
-		}
-		//next recursion
-		//for(Node n: diff(P, maxLinked.getChildren())) {
-		for(Node n: (LinkedList<Node>)P.clone()) {
-			LinkedList<Node> Rclone = (LinkedList<Node>)R.clone();
-			Rclone.add(n);
-			/*System.out.println("Pin:" + intersect(P, n.getChildren()));
-			System.out.println("P: " + P);
-			System.out.println("maxLink: " + maxLinked);
-			System.out.println("N(v): " + n.getChildren());
-			System.out.println("Xin:" + intersect(X, n.getChildren()));
-			in.nextLine();*/
-			findClique(Rclone, intersect(P, n.getChildren()), intersect(X, n.getChildren()), res);
-			P.remove(n);
-			if(X.contains(n))
-				X.add(n);
-		}
-		
-	}
-	
-	private LinkedList<Node> diff(LinkedList<Node> l1, LinkedList<Node> l2) {
-		LinkedList<Node> result = (LinkedList<Node>)l1.clone();
-		result.removeAll(l2);
-		return l2;
-	}
-	
-	private LinkedList<Node> union(LinkedList<Node> l1, LinkedList<Node> l2) {
-		LinkedList<Node> result = (LinkedList<Node>)l1.clone();
-		for(int i = 0; i < l2.size(); i++) {
-			if(!l1.contains(l2.get(i)))
-				l1.add(l2.get(i));
-		}
-		return result;
-	}
-	
-	private LinkedList<Node> intersect(LinkedList<Node> l1, LinkedList<Node> l2) {
-		LinkedList<Node> l3, l4;
-		if(l1.size() < l2.size()) {
-			l3 = (LinkedList<Node>)l1.clone();
-			l4 = (LinkedList<Node>)l2.clone();
-		}else{
-			l4 = (LinkedList<Node>)l1.clone();
-			l3 = (LinkedList<Node>)l2.clone();
-		}
-		ListIterator<Node> it = l3.listIterator(0);
-		while(it.hasNext()) {
-			if(!l4.contains(it.next()))
-				it.remove();
-		}
-		return l3;
-	}
+    private void findClique(LinkedList<Node> R, LinkedList<Node> P, LinkedList<Node> X, LinkedList<LinkedList<Node>> res) {
+        //stop
+        if(P.isEmpty() && X.isEmpty()) {
+            //return;
+            res.add(R);
+            return;
+        }
+        //next recursion
+        //for(Node n: diff(P, maxLinked.getChildren())) {
+        for(Node n: (LinkedList<Node>)P.clone()) {
+            LinkedList<Node> Rclone = (LinkedList<Node>)R.clone();
+            Rclone.add(n);
+            /*System.out.println("Pin:" + intersect(P, n.getChildren()));
+            System.out.println("P: " + P);
+            System.out.println("maxLink: " + maxLinked);
+            System.out.println("N(v): " + n.getChildren());
+            System.out.println("Xin:" + intersect(X, n.getChildren()));
+            in.nextLine();*/
+            findClique(Rclone, intersect(P, n.getChildren()), intersect(X, n.getChildren()), res);
+            P.remove(n);
+            if(X.contains(n))
+                X.add(n);
+        }
+
+    }
+
+    private LinkedList<Node> diff(LinkedList<Node> l1, LinkedList<Node> l2) {
+        LinkedList<Node> result = (LinkedList<Node>)l1.clone();
+        result.removeAll(l2);
+        return l2;
+    }
+
+    private LinkedList<Node> union(LinkedList<Node> l1, LinkedList<Node> l2) {
+        LinkedList<Node> result = (LinkedList<Node>)l1.clone();
+        for(int i = 0; i < l2.size(); i++) {
+            if(!l1.contains(l2.get(i)))
+                l1.add(l2.get(i));
+        }
+        return result;
+    }
+
+    private LinkedList<Node> intersect(LinkedList<Node> l1, LinkedList<Node> l2) {
+        LinkedList<Node> l3, l4;
+        if(l1.size() < l2.size()) {
+            l3 = (LinkedList<Node>)l1.clone();
+            l4 = (LinkedList<Node>)l2.clone();
+        }else{
+            l4 = (LinkedList<Node>)l1.clone();
+            l3 = (LinkedList<Node>)l2.clone();
+        }
+        ListIterator<Node> it = l3.listIterator(0);
+        while(it.hasNext()) {
+            if(!l4.contains(it.next()))
+                it.remove();
+        }
+        return l3;
+    }
 }
 
 // 
