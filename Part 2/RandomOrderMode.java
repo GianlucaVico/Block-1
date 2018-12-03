@@ -8,8 +8,12 @@ public class RandomOrderMode extends GameMode{
     
     public boolean gameEnded() {
         if(!ended) {
-            if(graph.notColored().size() == 0 && graph.errors().size() == 0) {}
+            if(graph.notColored().size() == 0 && graph.errors().size() == 0) {
+                ended = true;
+                win = true;
+            }
         }        
         return ended;
     }
+    //make next selection
 }

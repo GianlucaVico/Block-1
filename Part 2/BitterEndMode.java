@@ -1,24 +1,20 @@
-public class BitterEndMode extends GameMode {   //know chromatic number
-    private Solver solution;
-    
+public class BitterEndMode extends GameMode {   //know chromatic number    
     public BitterEndMode(GraphComponent graph) {
         super(graph);
         this.changeColor = true;
         this.initialTime = 0;
-        this.reversedTimer = false;                
-        this.solution = new ChromaticNumber(graph.getGraph(), new LowerBound(graph.getGraph()), new UpperBound((Graph)graph.getGraph().clone()));   //TODO reuse other solvers
+        this.reversedTimer = false;                   
     }   
     
-    public boolean gameEnded() {
+    public boolean gameEnded() {    //always win
         if(!ended){
         //every node colored
-        //number of color == chromatic number
-        //TODO color check 
-        if(graph.notColored().size() == 0 && graph.errors().size() == 0) {}
+        //number of color == chromatic number        
+            if(graph.notColored().size() == 0 && graph.errors().size() == 0 && graph.chromaticNumberUsed()) {
+                ended = true;
+                win = true;
+            }
         }
         return ended;
-    }
-    public void setSolever(Solver solver) {
-        this.solution = solver;
     }
 }

@@ -18,7 +18,8 @@ import javax.swing.JTextField;
 public class MainMenu extends JComponent{
     class StartAction implements ActionListener { 
         //TODO
-        public void actionPerformed(ActionEvent e) {            
+        public void actionPerformed(ActionEvent e) {    
+            graph.changeGraph(null);
             //set GraphComponent
             //set operation
             //make GameMode -> use solver from operation
@@ -109,7 +110,8 @@ public class MainMenu extends JComponent{
                 
         JButton start = new JButton("New Game");       
         start.setBounds(100, 50, 100, 50);
-                
+        start.addActionListener(new StartAction());
+        
         panel.add(modePanel);
         panel.add(graphPanel);        
         panel.add(start);
@@ -133,6 +135,10 @@ public class MainMenu extends JComponent{
                 break;
         }
         return m;
+    }
+    
+    public void setGameMode(GameMode m){
+        this.mode = m;
     }
     
     public Graph makeGraph(JRadioButton isFromFile, JTextField file, JSpinner edges, JSpinner nodes) {

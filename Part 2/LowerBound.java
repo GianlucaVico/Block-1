@@ -24,7 +24,7 @@ public class LowerBound implements Solver {
                 LinkedList<Node> X = new LinkedList<Node>();	//used nodes
                 LinkedList<LinkedList<Node>> res = new LinkedList<LinkedList<Node>>();	//list of cliques
                 Node[] nodes = g.getNodes();
-                for(int i = 0; i < nodes.length; i++) {
+                for(int i = 0; i < nodes.length; i++) {                    
                     P.add(nodes[i]);
                 }
                 findClique(R,P,X, res);
@@ -45,20 +45,25 @@ public class LowerBound implements Solver {
             return;
         }
         //next recursion
-        //for(Node n: diff(P, maxLinked.getChildren())) {
-        for(Node n: (LinkedList<Node>)P.clone()) {
-            LinkedList<Node> Rclone = (LinkedList<Node>)R.clone();
-            Rclone.add(n);
-            /*System.out.println("Pin:" + intersect(P, n.getChildren()));
-            System.out.println("P: " + P);
-            System.out.println("maxLink: " + maxLinked);
-            System.out.println("N(v): " + n.getChildren());
-            System.out.println("Xin:" + intersect(X, n.getChildren()));
-            in.nextLine();*/
-            findClique(Rclone, intersect(P, n.getChildren()), intersect(X, n.getChildren()), res);
-            P.remove(n);
-            if(X.contains(n))
-                X.add(n);
+        
+        //for(Node n: (LinkedList<Node>)P.clone()) {
+        Node n;
+        for(int i = 0; i < P.size(); i++){
+            n = P.get(i);
+            if(n.getDegree() != 0){
+                LinkedList<Node> Rclone = (LinkedList<Node>)R.clone();
+                Rclone.add(n);
+                /*System.out.println("Pin:" + intersect(P, n.getChildren()));
+                System.out.println("P: " + P);
+                System.out.println("maxLink: " + maxLinked);
+                System.out.println("N(v): " + n.getChildren());
+                System.out.println("Xin:" + intersect(X, n.getChildren()));
+                in.nextLine();*/
+                findClique(Rclone, intersect(P, n.getChildren()), intersect(X, n.getChildren()), res);
+                P.remove(n);
+                if(X.contains(n))
+                    X.add(n);
+            }
         }
 
     }

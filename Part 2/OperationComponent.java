@@ -5,11 +5,8 @@ import java.awt.event.ActionListener;
 
 import java.awt.*;
 
-import java.util.LinkedList;
-//TODO make graph changeable
 //TODO update combobox
 //TODO reset combobox
-//TODO return solvers
 public class OperationComponent extends JComponent{
     class Item {
         public int count;
@@ -40,7 +37,11 @@ public class OperationComponent extends JComponent{
         }
 
         public void actionPerformed(ActionEvent event) {
-            label.setText(textBefore + " " + solver.solve() + " " + textAfter);
+            int hint = solver.solve();
+            if(hint != -1)
+                label.setText(textBefore + " " + solver.solve() + " " + textAfter);
+            else
+                label.setText("I can't help you :'(");
         }
     }
 
@@ -57,7 +58,7 @@ public class OperationComponent extends JComponent{
             setVerticalAlignment(CENTER);			
         }
         public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            if(graphComponent.getSelectedNode() != null){
+            //if(graphComponent.getSelectedNode() != null){
                 Item i = (Item)value;
                 setBackground(i.color);
                 if(value == box.getSelectedItem()){				
@@ -66,9 +67,9 @@ public class OperationComponent extends JComponent{
                 }else {		
                     setText("Color " + index);
                 }			
-            } else {
+            /*} else {
                 setText("Color " + index);
-            }
+            }*/
             return this;
         }
     }
@@ -95,10 +96,13 @@ public class OperationComponent extends JComponent{
         box = new JComboBox<Item>();
         box.setRenderer(renderer);	
 
-        box.addItem(new Item("Test", Color.GREEN));	//test
+        box.addItem(new Item("No color", Color.BLACK));	//test
         box.addItem(new Item("Test", Color.RED));	//test
         box.addItem(new Item("Test", Color.BLUE));	//test
-
+        
+        JButton set = new JButton("Set Color");
+        set.addActionListener(new UpdateColor());
+        
         low = new JButton("Lower bound");		
         up = new JButton("Upper bound");		
         ch = new JButton("Chromatic number");           
@@ -110,13 +114,13 @@ public class OperationComponent extends JComponent{
         //make solvers (some solvers need other solver to work)
         changeGraphComponent(graphComponent);
         //combo -> update counter/operation panel */
-        box.addActionListener(new UpdateColor());
-
+        //box.addActionListener(new UpdateColor());
+        
         //add to panel
         this.panel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         c.weighty = .5;
-        c.gridy = 0;
+        /*c.gridy = 0;
         this.panel.add(selectedName, c);
         c.gridy = 1;
         this.panel.add(box, c);
@@ -133,7 +137,12 @@ public class OperationComponent extends JComponent{
         c.gridy = 7;
         this.panel.add(bestColor, c);
         c.gridy = 8;
-        this.panel.add(hint, c);
+        this.panel.add(hint, c);*/
+        JComponent[] toAdd = new JComponent[]{selectedName, box, set, new JLabel("Hints"), low, up, ch, bestNode, bestColor, hint};
+        for(int i = 0; i < toAdd.length; i++) {
+            c.gridy = i;
+            this.panel.add(toAdd[i], c);
+        }
     }
 
     private Color makeNextColor() {
@@ -147,29 +156,25 @@ public class OperationComponent extends JComponent{
     }
 
     public void update() {
-        int length = box.getItemCount();
-        //update last selected node	
-        lastSelected = graphComponent.getSelectedNode();//.getColor();
-        //update gui
-        box.setSelectedIndex(lastSelected.getColor());
-        //update color counter
-        if(box.getSelectedIndex() != lastSelected.getColor()) {
-            //colors.get(lastSelected.getColor()).count--;
-            box.getItemAt(lastSelected.getColor()).count--;
-            lastSelected.setColor(box.getSelectedIndex());
-            //colors.get(lastSelected.getColor()).count++;
-            box.getItemAt(lastSelected.getColor()).count++;
+        Node selected = graphComponent.getSelectedNode();
+        if(selected != null) {            
+            if(selected.getColor() != - 1) {
+                box.getItemAt(selected.getColor() + 1).count--; //colors from -1
+            }
+            selected.setColor(box.getSelectedIndex() -1);
+            ((Item)box.getSelectedItem()).count++;               
         }
-        //add new color if needed		
-        if(box.getItemAt(length - 1).count > 0) {
-            box.addItem(new Item("Color", Color.RED));	//TODO set a valid color and a valid name
-        }else if(length >= 2 && box.getItemAt(length - 2).count < 0){	//last 2 not used
+        int length = box.getItemCount();
+        if(box.getItemAt(length - 1).count != 0) {
+            box.addItem(new Item("Make name", makeNextColor()));
+        }else if (length >= 2 && box.getItemAt(length -2).count == 0) {
             box.removeItemAt(length -1);
         }
     }
     
     public void changeGraphComponent(GraphComponent graph) {
         this.graphComponent = graph;
+        //TODO get from graphcomponent
         lowS = new LowerBound(graphComponent.getGraph());				//lower
         upS = new UpperBound((Graph)graphComponent.getGraph().clone());			//upper
         chS = new ChromaticNumber((Graph)graphComponent.getGraph().clone(), lowS, upS);	//exact
@@ -185,6 +190,18 @@ public class OperationComponent extends JComponent{
     
     public Solver[] getSolvers() {
         return new Solver[]{lowS, upS, chS, bnS, bcS};
+    }
+    
+    public Color getColor(int i) {
+        Color c = Color.BLACK;
+        if (i < box.getItemCount() && i >= 0) {
+            c = ((Item)box.getItemAt(i)).color;
+        }
+        return c;
+    }
+    
+    public int countColors() {
+        return box.getItemCount() - 1;
     }
     
     public static void main(String[] args) {

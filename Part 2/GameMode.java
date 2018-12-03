@@ -21,7 +21,7 @@ public abstract class GameMode {
     
     //don't check correct colors -> done by graph component
     //check if correct solution and graph full colored - no erros from graph component
-    public abstract boolean gameEnded();    
+    public abstract boolean gameEnded();   //set win too 
     
     public boolean isTimerReversed() {
         return reversedTimer;

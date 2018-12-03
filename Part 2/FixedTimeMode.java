@@ -11,8 +11,8 @@ public class FixedTimeMode extends GameMode { //doesnt know chromatic number
         //every node colored
         //timer == 0
         //TODO timer check
-        if((graph.notColored().size() == 0 && graph.errors().size() == 0)) {}
-        }
+            if((graph.notColored().size() == 0 && graph.errors().size() == 0)) {}
+            }
         return ended;
     }
 }
