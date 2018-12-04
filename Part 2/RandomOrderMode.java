@@ -3,12 +3,14 @@ public class RandomOrderMode extends GameMode{
         super(graph);
         this.changeColor = false;
         this.initialTime = 0;
-        this.reversedTimer = false;        
+        this.reversedTimer = false; 
+        this.allowsErrors = false;
     }
     
     public boolean gameEnded() {
+        //always win
         if(!ended) {
-            if(graph.notColored().size() == 0 && graph.errors().size() == 0) {
+            if(graph.notColored().isEmpty() && graph.errors().isEmpty()) {
                 ended = true;
                 win = true;
             }

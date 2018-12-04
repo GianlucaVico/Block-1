@@ -76,9 +76,9 @@ public class Node {
     
     public void draw(Graphics2D g2) {
         g2.setStroke(new BasicStroke(size));        
-        //g2.setColor(op.getColor(color));
+        g2.setColor(op.getColor(color));          
         g2.draw(new Ellipse2D.Double(x * Node.width - size/ 2, y * Node.height - size / 2, size, size));
-        g2.drawString(Integer.toString(id), (float)(x * Node.width - size / 2), (float)(y * Node.height - size));
+        g2.drawString(Integer.toString(id), (float)(x * Node.width - size / 2), (float)(y * Node.height - size*1.5));
     }
     
     public Point2D.Double getPoint() {

@@ -49,20 +49,25 @@ public class LowerBound implements Solver {
         //for(Node n: (LinkedList<Node>)P.clone()) {
         Node n;
         for(int i = 0; i < P.size(); i++){
-            n = P.get(i);
-            if(n.getDegree() != 0){
-                LinkedList<Node> Rclone = (LinkedList<Node>)R.clone();
-                Rclone.add(n);
-                /*System.out.println("Pin:" + intersect(P, n.getChildren()));
-                System.out.println("P: " + P);
-                System.out.println("maxLink: " + maxLinked);
-                System.out.println("N(v): " + n.getChildren());
-                System.out.println("Xin:" + intersect(X, n.getChildren()));
-                in.nextLine();*/
-                findClique(Rclone, intersect(P, n.getChildren()), intersect(X, n.getChildren()), res);
-                P.remove(n);
-                if(X.contains(n))
-                    X.add(n);
+            try {
+                n = P.get(i);
+                if(n.getDegree() != 0){
+                    LinkedList<Node> Rclone = (LinkedList<Node>)R.clone();
+                    Rclone.add(n);
+                    /*System.out.println("Pin:" + intersect(P, n.getChildren()));
+                    System.out.println("P: " + P);
+                    System.out.println("maxLink: " + maxLinked);
+                    System.out.println("N(v): " + n.getChildren());
+                    System.out.println("Xin:" + intersect(X, n.getChildren()));
+                    in.nextLine();*/
+                    findClique(Rclone, intersect(P, n.getChildren()), intersect(X, n.getChildren()), res);
+                    P.remove(n);
+                    if(!X.contains(n))
+                        X.add(n);
+                }
+            }catch(StackOverflowError e){
+                System.out.println(e.getMessage());
+                System.out.println("StackOverflowError in findClique: " + P.size());
             }
         }
 

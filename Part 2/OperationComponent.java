@@ -119,25 +119,7 @@ public class OperationComponent extends JComponent{
         //add to panel
         this.panel.setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-        c.weighty = .5;
-        /*c.gridy = 0;
-        this.panel.add(selectedName, c);
-        c.gridy = 1;
-        this.panel.add(box, c);
-        c.gridy = 2;
-        this.panel.add(new JLabel("Hints"), c);
-        c.gridy = 3;
-        this.panel.add(low, c);
-        c.gridy = 4;
-        this.panel.add(up, c);
-        c.gridy = 5;
-        this.panel.add(ch, c);
-        c.gridy = 6;
-        this.panel.add(bestNode, c);
-        c.gridy = 7;
-        this.panel.add(bestColor, c);
-        c.gridy = 8;
-        this.panel.add(hint, c);*/
+        c.weighty = .5;        
         JComponent[] toAdd = new JComponent[]{selectedName, box, set, new JLabel("Hints"), low, up, ch, bestNode, bestColor, hint};
         for(int i = 0; i < toAdd.length; i++) {
             c.gridy = i;
@@ -167,7 +149,7 @@ public class OperationComponent extends JComponent{
         int length = box.getItemCount();
         if(box.getItemAt(length - 1).count != 0) {
             box.addItem(new Item("Make name", makeNextColor()));
-        }else if (length >= 2 && box.getItemAt(length -2).count == 0) {
+        }else if (length >= 3 && box.getItemAt(length -2).count == 0) {
             box.removeItemAt(length -1);
         }
     }

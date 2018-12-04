@@ -8,11 +8,10 @@ public class FixedTimeMode extends GameMode { //doesnt know chromatic number
     
     public boolean gameEnded() {
         if(!ended){
-        //every node colored
         //timer == 0
-        //TODO timer check
-            if((graph.notColored().size() == 0 && graph.errors().size() == 0)) {}
-            }
+        //TODO timer check to set end
+            win = (graph.notColored().isEmpty() && graph.errors().isEmpty());         
+        }
         return ended;
     }
 }

@@ -9,8 +9,9 @@ public class BitterEndMode extends GameMode {   //know chromatic number
     public boolean gameEnded() {    //always win
         if(!ended){
         //every node colored
-        //number of color == chromatic number        
-            if(graph.notColored().size() == 0 && graph.errors().size() == 0 && graph.chromaticNumberUsed()) {
+        //number of color == chromatic number  
+        //always win
+            if(graph.notColored().isEmpty() && graph.errors().isEmpty() && graph.chromaticNumberUsed()) {
                 ended = true;
                 win = true;
             }

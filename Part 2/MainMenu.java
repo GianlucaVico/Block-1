@@ -19,7 +19,7 @@ public class MainMenu extends JComponent{
     class StartAction implements ActionListener { 
         //TODO
         public void actionPerformed(ActionEvent e) {    
-            graph.changeGraph(null);
+            //graph.changeGraph(null);
             //set GraphComponent
             //set operation
             //make GameMode -> use solver from operation
@@ -97,10 +97,14 @@ public class MainMenu extends JComponent{
         t2.addItemListener(new ChangeAction(t2, new JComponent[]{graphFile}));
         
         graphPanel.add(new JLabel("Graph options"));
-        graphPanel.add(t1);
+        graphPanel.add(t1);        
         graphPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        graphPanel.add(new JLabel("Edges"));
+        graphPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         graphPanel.add(edges);
         graphPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+        graphPanel.add(new JLabel("Nodes"));
+        graphPanel.add(Box.createRigidArea(new Dimension(0, 5)));
         graphPanel.add(nodes);
         graphPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         graphPanel.add(t2);

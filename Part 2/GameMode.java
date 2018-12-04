@@ -6,6 +6,7 @@ public abstract class GameMode {
     protected GraphComponent graph;
     protected boolean win;
     protected boolean ended;
+    protected boolean allowsErrors;
     
     public GameMode(GraphComponent graph, boolean reversed, boolean changeColor, int initialTime) {
         this.graph = graph;
@@ -13,6 +14,7 @@ public abstract class GameMode {
         this.changeColor = changeColor;
         this.initialTime = initialTime;
         this.started = false;
+        this.allowsErrors = true;
     }
     public GameMode(GraphComponent graph) {
         this.graph = graph;
@@ -38,10 +40,15 @@ public abstract class GameMode {
     public void start() {
         started = true;
     }
+    
     public boolean isWinner() {
         boolean result = false;
         if(started && ended && win)
             result = true;
         return result;
+    }
+    
+    public boolean errorAllowed() {
+        return allowsErrors;
     }
 }
