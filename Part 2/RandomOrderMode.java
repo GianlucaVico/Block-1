@@ -5,6 +5,7 @@ public class RandomOrderMode extends GameMode{
         this.initialTime = 0;
         this.reversedTimer = false; 
         this.allowsErrors = false;
+        this.autoSelect = true;
     }
     
     public boolean gameEnded() {
@@ -16,6 +17,5 @@ public class RandomOrderMode extends GameMode{
             }
         }        
         return ended;
-    }
-    //make next selection
+    }    
 }

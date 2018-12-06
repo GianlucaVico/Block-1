@@ -10,6 +10,7 @@ public class Node {
     public static float size = 10F;
     public static double height = 0;
     public static double width = 0;
+    public static double border = 10;
     private static OperationComponent op;
     
     private int id;
@@ -76,12 +77,22 @@ public class Node {
     
     public void draw(Graphics2D g2) {
         g2.setStroke(new BasicStroke(size));        
-        g2.setColor(op.getColor(color));          
-        g2.draw(new Ellipse2D.Double(x * Node.width - size/ 2, y * Node.height - size / 2, size, size));
-        g2.drawString(Integer.toString(id), (float)(x * Node.width - size / 2), (float)(y * Node.height - size*1.5));
+        g2.setColor(op.getColor(color));      
+        double xDraw = getX() - size/ 2;
+        double yDraw = getY() - size / 2;
+        g2.draw(new Ellipse2D.Double(xDraw, yDraw, size, size));
+        g2.drawString(Integer.toString(id), (float)(xDraw), (float)(yDraw - size));
+    }
+    
+    private double getX() {
+        return Math.min(Math.max(x * Node.width, border), width - border);
+    }
+    
+    private double getY() {
+        return Math.min(Math.max(y * Node.height, border), height - border);
     }
     
     public Point2D.Double getPoint() {
-        return new Point2D.Double(x * width,y * height);
+        return new Point2D.Double(getX(), getY());
     }    
 }

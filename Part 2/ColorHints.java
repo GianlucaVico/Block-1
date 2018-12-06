@@ -20,10 +20,15 @@ public class ColorHints implements Solver {
                     if(n.getChild(i).getColor() == color) {
                         ok = false;
                     }
+                    i++;
                 }
             }while(!ok);
+            if(!ok)
+                color++;
+        }else{
+            color--;
         }
-        return color;
+        return color + 1;
     }
 	
     public Graph getGraph() {

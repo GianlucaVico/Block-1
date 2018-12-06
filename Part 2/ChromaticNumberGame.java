@@ -13,16 +13,18 @@ public class ChromaticNumberGame {
         
         //make GraphComponent
         GraphComponent gc = new GraphComponent();
-        
+        gc.update();
         //make OperationComponenet
         OperationComponent op = new OperationComponent(gc, opPanel);
+        op.update();
         gc.setOperationComponent(op);
         opPanel.add(op);
         
         //make MainMenu
         MainMenu menu = new MainMenu(gc, op, menuPanel);
+        op.setMainMenu(menu);
         menuPanel.add(menu);
-                     
+        
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(1000, 1000);        
         
@@ -39,7 +41,8 @@ public class ChromaticNumberGame {
         constr.gridx = 1;        
         left.add(opPanel, constr);
         frame.add(left, 0,0);
-        gc.setDrawSize(600, 400);        
+        gc.setDrawSize(600, 400, 15);
+        gc.setGameMode(menu.getGameMode());
         constr.gridx = 2;          
         //frame.add(gc, constr);     
         frame.add(gc, 0, 1);

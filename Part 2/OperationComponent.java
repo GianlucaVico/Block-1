@@ -5,8 +5,6 @@ import java.awt.event.ActionListener;
 
 import java.awt.*;
 
-//TODO update combobox
-//TODO reset combobox
 public class OperationComponent extends JComponent{
     class Item {
         public int count;
@@ -47,7 +45,14 @@ public class OperationComponent extends JComponent{
 
     class UpdateColor implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            update();
+            if(!menu.getTimer().isRunning()) {
+                menu.getTimer().start();
+            }
+            
+            if(!menu.getGameMode().isGameStarted()) {
+                setColor();
+                graphComponent.update();    //this check also if the game is ended
+            }            
         }
     }
 
@@ -64,31 +69,31 @@ public class OperationComponent extends JComponent{
                 if(value == box.getSelectedItem()){				
                     setText("Color " + box.getSelectedIndex());				
                     box.setBackground(i.color);
-                }else {		
+                }else if(index == 0){
+                    this.setForeground(Color.WHITE);
+                    setText("- - -");
+                    //this.setForeground(Color.BLACK);
+                }else {
                     setText("Color " + index);
-                }			
-            /*} else {
-                setText("Color " + index);
-            }*/
+                }			            
             return this;
         }
     }
 
     private GraphComponent graphComponent;
+    private MainMenu menu;
     private JComboBox<Item> box;
     private JPanel panel;
     private JLabel selectedName;
-    private JLabel hint;
-    private Node lastSelected;
+    private JLabel hint;    
 
     private JButton low, up, ch, bestNode, bestColor;   //to make graph changeable
-    private Solver lowS, upS, chS, bnS, bcS;   //to make graph changeable
+    //private Solver lowS, upS, chS, bnS, bcS;   //to make graph changeable
     
     public OperationComponent(GraphComponent graphComponent, JPanel panel) {
         this.panel = panel;
         this.graphComponent = graphComponent;
-        //colors = new LinkedList<Item>();
-        lastSelected = null;
+        //colors = new LinkedList<Item>();        
 
         selectedName = new JLabel("- - -");
         hint = new JLabel();
@@ -112,7 +117,7 @@ public class OperationComponent extends JComponent{
         //add listener
             //button listener -> display hints of label
         //make solvers (some solvers need other solver to work)
-        changeGraphComponent(graphComponent);
+        updateSolvers();
         //combo -> update counter/operation panel */
         //box.addActionListener(new UpdateColor());
         
@@ -137,15 +142,37 @@ public class OperationComponent extends JComponent{
         return Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
     }
 
-    public void update() {
+    public void setColor() {
         Node selected = graphComponent.getSelectedNode();
-        if(selected != null) {            
-            if(selected.getColor() != - 1) {
+        
+        if(selected != null){// && !(selected.getColor() != - 1 && menu.getGameMode().canChangeColor())) {
+            if(selected.getColor() != - 1) {                
                 box.getItemAt(selected.getColor() + 1).count--; //colors from -1
             }
+            int tmp = selected.getColor(); //if there are errors
             selected.setColor(box.getSelectedIndex() -1);
-            ((Item)box.getSelectedItem()).count++;               
+            if(!menu.getGameMode().errorAllowed() && graphComponent.errors().size() != 0){  //if error come back
+                selected.setColor(tmp);
+                
+            }else{
+                ((Item)box.getSelectedItem()).count++;              //if no errors update counter
+            }
         }
+        updateBox();          
+    }
+        
+    public void update() {
+        Node selected = graphComponent.getSelectedNode();
+        if(selected != null) {                                 
+            selectedName.setText("Node " + selected.getId());
+        }else {
+            selectedName.setText("- - -");
+        }
+        updateBox();
+        //check winning condition
+    }
+    
+    private void updateBox() {
         int length = box.getItemCount();
         if(box.getItemAt(length - 1).count != 0) {
             box.addItem(new Item("Make name", makeNextColor()));
@@ -154,36 +181,29 @@ public class OperationComponent extends JComponent{
         }
     }
     
-    public void changeGraphComponent(GraphComponent graph) {
-        this.graphComponent = graph;
-        //TODO get from graphcomponent
-        lowS = new LowerBound(graphComponent.getGraph());				//lower
-        upS = new UpperBound((Graph)graphComponent.getGraph().clone());			//upper
-        chS = new ChromaticNumber((Graph)graphComponent.getGraph().clone(), lowS, upS);	//exact
-        bnS = new BestNode((Graph)graphComponent.getGraph().clone());			//best node
-        bcS = new ColorHints(graphComponent);						//best color for this nodeclone
-
-        low.addActionListener(new Hints(hint, "You need at least", "colors", lowS));
-        up.addActionListener(new Hints(hint, "You need less than", "colors", upS));
-        ch.addActionListener(new Hints(hint, "You need", "colors", chS));
-        bestNode.addActionListener(new Hints(hint, "You should try to solve Node", "", bnS));
-        bestColor.addActionListener(new Hints(hint, "For this node I suggest Color", "", bcS));
-    }
+    public void updateSolvers() {        
+        Solver[] s = this.graphComponent.getSolvers();
+        low.addActionListener(new Hints(hint, "You need at least", "colors", s[GraphComponent.LOWER_BOUND]));
+        up.addActionListener(new Hints(hint, "You need less than", "colors", s[GraphComponent.UPPER_BOUND]));
+        ch.addActionListener(new Hints(hint, "You need", "colors", s[GraphComponent.EXACT]));
+        bestNode.addActionListener(new Hints(hint, "You should try to solve Node", "", s[GraphComponent.BEST_NODE]));
+        bestColor.addActionListener(new Hints(hint, "For this node I suggest Color", "", s[GraphComponent.BEST_COLOR]));
+    }    
     
-    public Solver[] getSolvers() {
-        return new Solver[]{lowS, upS, chS, bnS, bcS};
+    public void setMainMenu(MainMenu menu) {
+        this.menu = menu;
     }
     
     public Color getColor(int i) {
         Color c = Color.BLACK;
-        if (i < box.getItemCount() && i >= 0) {
-            c = ((Item)box.getItemAt(i)).color;
+        if (i < box.getItemCount()-1 && i >= 0) {
+            c = ((Item)box.getItemAt(i+1)).color;
         }
         return c;
     }
     
     public int countColors() {
-        return box.getItemCount() - 1;
+        return box.getItemCount() - 2;  //first and last not used
     }
     
     public static void main(String[] args) {

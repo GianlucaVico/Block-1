@@ -7,18 +7,22 @@ public abstract class GameMode {
     protected boolean win;
     protected boolean ended;
     protected boolean allowsErrors;
+    protected boolean autoSelect;
     
-    public GameMode(GraphComponent graph, boolean reversed, boolean changeColor, int initialTime) {
+    public GameMode(GraphComponent graph, boolean reversed, boolean changeColor, int initialTime, boolean allowErrors, boolean autoSelect) {
         this.graph = graph;
         this.reversedTimer = reversed;
         this.changeColor = changeColor;
         this.initialTime = initialTime;
         this.started = false;
-        this.allowsErrors = true;
+        this.allowsErrors = allowErrors;
+        this.autoSelect = autoSelect;
     }
     public GameMode(GraphComponent graph) {
         this.graph = graph;
         this.started = false;
+        this.allowsErrors = true;
+        this.autoSelect = false;
     }
     
     //don't check correct colors -> done by graph component
@@ -50,5 +54,9 @@ public abstract class GameMode {
     
     public boolean errorAllowed() {
         return allowsErrors;
+    }
+    
+    public boolean autoSelection() {
+        return autoSelect;
     }
 }

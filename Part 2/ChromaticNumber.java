@@ -32,6 +32,12 @@ public class ChromaticNumber implements Solver {
                     if(tmp < solution)
                         solution = tmp;
                 }
+                if(solution < lower.solve()) {
+                    solution = lower.solve();
+                }
+                if(solution > upper.solve()){
+                    solution = upper.solve();
+                }
             }
         }
         return solution;
@@ -115,6 +121,6 @@ public class ChromaticNumber implements Solver {
             bound = chromSubgraph;
         }
 
-        return bound;
+        return bound + 1;
     }
 }

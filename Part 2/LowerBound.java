@@ -27,11 +27,13 @@ public class LowerBound implements Solver {
                 for(int i = 0; i < nodes.length; i++) {                    
                     P.add(nodes[i]);
                 }
+                P = diff(P, g.getRemoveed());
                 findClique(R,P,X, res);
                 for(int i = 0; i < res.size(); i++) {
                     if(res.get(i).size() > solution)
                         solution = res.get(i).size();
                 }
+                solution++;
             }
         }
         return solution;
@@ -45,32 +47,25 @@ public class LowerBound implements Solver {
             return;
         }
         //next recursion
-        
-        //for(Node n: (LinkedList<Node>)P.clone()) {
-        Node n;
-        for(int i = 0; i < P.size(); i++){
-            try {
-                n = P.get(i);
+        if(!P.isEmpty()) {
+            ListIterator<Node> it = P.listIterator(0);
+            Node n;
+            while(it.hasNext()) {
+                n = it.next();
                 if(n.getDegree() != 0){
                     LinkedList<Node> Rclone = (LinkedList<Node>)R.clone();
-                    Rclone.add(n);
-                    /*System.out.println("Pin:" + intersect(P, n.getChildren()));
-                    System.out.println("P: " + P);
-                    System.out.println("maxLink: " + maxLinked);
-                    System.out.println("N(v): " + n.getChildren());
-                    System.out.println("Xin:" + intersect(X, n.getChildren()));
-                    in.nextLine();*/
-                    findClique(Rclone, intersect(P, n.getChildren()), intersect(X, n.getChildren()), res);
-                    P.remove(n);
+                    Rclone.add(n);                    
+                    try {
+                        findClique(Rclone, intersect(P, n.getChildren()), intersect(X, n.getChildren()), res);
+                    }catch(StackOverflowError e){                
+                        System.out.println("StackOverflowError in findClique: " + P.size());
+                    }     
+                    it.remove();
                     if(!X.contains(n))
                         X.add(n);
                 }
-            }catch(StackOverflowError e){
-                System.out.println(e.getMessage());
-                System.out.println("StackOverflowError in findClique: " + P.size());
             }
         }
-
     }
 
     private LinkedList<Node> diff(LinkedList<Node> l1, LinkedList<Node> l2) {

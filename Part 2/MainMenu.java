@@ -3,6 +3,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import java.io.File;
+import java.util.Enumeration;
+import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.JLabel; 
 import javax.swing.JButton; 
@@ -13,17 +16,39 @@ import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
 import javax.swing.JSpinner;
 import javax.swing.BoxLayout;
+import javax.swing.JFileChooser;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileSystemView;
 
 public class MainMenu extends JComponent{
     class StartAction implements ActionListener { 
-        //TODO
+        private ButtonGroup modes;        
+        public StartAction(ButtonGroup modes) {
+            this.modes = modes;
+        }        
         public void actionPerformed(ActionEvent e) {    
             //graph.changeGraph(null);
             //set GraphComponent
             //set operation
             //make GameMode -> use solver from operation
             //start timer
+            boolean found = false;
+            int i = 0;
+            Enumeration<AbstractButton> en = modes.getElements();
+            while(!found && en.hasMoreElements()) {
+                if(en.nextElement().isSelected()){
+                    found = true;
+                }else {
+                    i++;
+                }
+            }
+            mode = makeGameMode(i);
+            graph.setGameMode(mode);
+            graph.changeGraph(makeGraph());
+            mode.start();
+            graph.update();   
+            graph.getOperationComponent().updateSolvers();
+            graph.getOperationComponent().update();
         }
     }
     
@@ -43,12 +68,19 @@ public class MainMenu extends JComponent{
     }
     
     private GraphComponent graph;
-    private OperationComponent operation;
+    //private OperationComponent operation;
     private GameMode mode;     
-     
-    public MainMenu(GraphComponent graph, OperationComponent operation, JPanel panel){ 
-        this.graph = graph;
-        this.operation = operation;
+    private JSpinner edges, nodes;
+    private JTextField file;
+    private JButton chooseFile;
+    private PlayTimer timer;
+    
+    public MainMenu(GraphComponent graph, OperationComponent operation, JPanel panel){         
+        System.out.println(mode);
+        this.graph = graph;        
+        this.timer = new PlayTimer(false, 0);
+        this.mode = makeGameMode(0);
+        //this.operation = operation;
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         
         ButtonGroup modeGroup = new ButtonGroup();
@@ -85,16 +117,29 @@ public class MainMenu extends JComponent{
         JRadioButton t2 = new JRadioButton("From file");    //a textfild
         t1.setSelected(true);
         
-        JSpinner edges = new JSpinner();    //make a spinnermodel 
-        JSpinner nodes = new JSpinner();
-        JTextField graphFile = new JTextField();    //change to a JFileChooser
-        graphFile.setEnabled(false);
+        edges = new JSpinner();    //make a spinnermodel 
+        nodes = new JSpinner();
+        file = new JTextField();    //change to a JFileChooser
+        file.setEnabled(false);
+        chooseFile = new JButton("Choose");
+        chooseFile.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());		
+		int returnValue = jfc.showOpenDialog(null);
+
+		if (returnValue == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = jfc.getSelectedFile();
+			file.setText(selectedFile.getAbsolutePath());
+		
+		}
+            }
+        });
         
         graphType.add(t1);        
         graphType.add(t2);               
         
         t1.addItemListener(new ChangeAction(t1, new JComponent[]{edges, nodes}));
-        t2.addItemListener(new ChangeAction(t2, new JComponent[]{graphFile}));
+        t2.addItemListener(new ChangeAction(t2, new JComponent[]{file}));
         
         graphPanel.add(new JLabel("Graph options"));
         graphPanel.add(t1);        
@@ -109,20 +154,25 @@ public class MainMenu extends JComponent{
         graphPanel.add(Box.createRigidArea(new Dimension(0, 20)));
         graphPanel.add(t2);
         graphPanel.add(Box.createRigidArea(new Dimension(0, 10)));
-        graphPanel.add(graphFile);
+        graphPanel.add(file);
+        graphPanel.add(chooseFile);
         graphPanel.add(Box.createRigidArea(new Dimension(0, 10)));
                 
         JButton start = new JButton("New Game");       
         start.setBounds(100, 50, 100, 50);
-        start.addActionListener(new StartAction());
+        start.addActionListener(new StartAction(modeGroup));
         
         panel.add(modePanel);
         panel.add(graphPanel);        
         panel.add(start);
+        panel.add(timer);
     }      
     
     public GameMode makeGameMode(int mode) {
-        GameMode m = null;
+        GameMode m = null;       
+        timer.stop();
+        timer.reset(0);
+        timer.setReversed(false, null);
         switch(mode) {
             case 0:
                 m = new BitterEndMode(graph);
@@ -130,29 +180,41 @@ public class MainMenu extends JComponent{
                 break;
             case 1:
                 m = new FixedTimeMode(graph);
+                timer.setReversed(true, new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        graph.update(); //so check gamemode ended
+                    }
+                });
+                timer.reset(120);
+                ((FixedTimeMode)m).setTimer(timer);
                 break;
             case 2:
                 m = new RandomOrderMode(graph);
-                break;
-            default:
-                //TODO throw exception
-                break;
-        }
+                break;            
+        }        
         return m;
     }
     
-    public void setGameMode(GameMode m){
+    public void setGameMode(GameMode m){       
         this.mode = m;
     }
     
-    public Graph makeGraph(JRadioButton isFromFile, JTextField file, JSpinner edges, JSpinner nodes) {
+    public GameMode getGameMode(){
+        return mode;
+    }
+    
+    public Graph makeGraph() {
         Graph g;
-        if(isFromFile.isSelected()) {
+        if(file.isEnabled()) {
             g = new Graph(file.getText().trim());
         }else {
             g = new Graph((Integer)nodes.getValue(), (Integer)edges.getValue());
         }
         return g;
+    }
+    
+    public PlayTimer getTimer() {
+        return timer;
     }
     
     public static void main(String[] args) {  
@@ -162,7 +224,6 @@ public class MainMenu extends JComponent{
         JPanel panel = new JPanel();
         panel.add(new MainMenu(null, null, panel));
         frame.add(panel);
-        frame.setVisible(true);
-        
+        frame.setVisible(true);        
     }  
 }

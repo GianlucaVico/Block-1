@@ -94,7 +94,8 @@ public class UpperBound implements Solver {
             }
             bound = color + 1;
         }
-        return bound + 1;
+        //return bound + 1;
+        return bound;
     }
 
     private int countConflicts(Node n) {
