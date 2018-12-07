@@ -1,10 +1,11 @@
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Point2D;
 import java.util.LinkedList; 
-import javax.swing.JComboBox;
+
 
 public class Node {
     public static float size = 10F;
@@ -80,8 +81,12 @@ public class Node {
         g2.setColor(op.getColor(color));      
         double xDraw = getX() - size/ 2;
         double yDraw = getY() - size / 2;
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
         g2.draw(new Ellipse2D.Double(xDraw, yDraw, size, size));
         g2.drawString(Integer.toString(id), (float)(xDraw), (float)(yDraw - size));
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
     }
     
     private double getX() {

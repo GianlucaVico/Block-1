@@ -41,7 +41,7 @@ public class ChromaticNumberGame {
         constr.gridx = 1;        
         left.add(opPanel, constr);
         frame.add(left, 0,0);
-        gc.setDrawSize(600, 400, 15);
+        gc.setDrawSize(600, 400, 25);
         gc.setGameMode(menu.getGameMode());
         constr.gridx = 2;          
         //frame.add(gc, constr);     

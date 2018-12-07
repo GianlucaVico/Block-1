@@ -44,15 +44,13 @@ public class OperationComponent extends JComponent{
     }
 
     class UpdateColor implements ActionListener {
-        public void actionPerformed(ActionEvent event) {
+        public void actionPerformed(ActionEvent event) {            
             if(!menu.getTimer().isRunning()) {
                 menu.getTimer().start();
-            }
-            
-            if(!menu.getGameMode().isGameStarted()) {
-                setColor();
-                graphComponent.update();    //this check also if the game is ended
+                menu.getGameMode().start();
             }            
+            setColor();
+            graphComponent.update();    //this check also if the game is ended
         }
     }
 
@@ -134,17 +132,18 @@ public class OperationComponent extends JComponent{
 
     private Color makeNextColor() {
         Color lastColor = box.getItemAt(box.getItemCount() - 1).color;
-        float[] hsb = Color.RGBtoHSB(lastColor.getRed(), lastColor.getGreen(), lastColor.getBlue(), null);
+        float[] hsb = Color.RGBtoHSB(lastColor.getRed(), lastColor.getGreen(), lastColor.getBlue(), null);        
         //every turn reduce saturation
-        hsb[0] +=  11F/360F;
+        hsb[0] +=  22F/360F;
         hsb[1] -= (float)Math.ceil(hsb[0])/10;
-        hsb[0] = (float)Math.ceil(hsb[0]);
+        if(hsb[0] > 1)
+            hsb[0]--;
+        
         return Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
     }
 
     public void setColor() {
-        Node selected = graphComponent.getSelectedNode();
-        
+        Node selected = graphComponent.getSelectedNode();        
         if(selected != null){// && !(selected.getColor() != - 1 && menu.getGameMode().canChangeColor())) {
             if(selected.getColor() != - 1) {                
                 box.getItemAt(selected.getColor() + 1).count--; //colors from -1
@@ -181,14 +180,34 @@ public class OperationComponent extends JComponent{
         }
     }
     
+    public void resetBox() {
+        int length = box.getItemCount();
+        while(length > 2) {
+            box.removeItemAt(length -1);
+            length = box.getItemCount();
+        }
+    }
+    
     public void updateSolvers() {        
-        Solver[] s = this.graphComponent.getSolvers();
+        Solver[] s = this.graphComponent.getSolvers();        
+        resetHintButton(low);
+        resetHintButton(up);
+        resetHintButton(ch);
+        resetHintButton(bestNode);
+        resetHintButton(bestColor);
+        
         low.addActionListener(new Hints(hint, "You need at least", "colors", s[GraphComponent.LOWER_BOUND]));
         up.addActionListener(new Hints(hint, "You need less than", "colors", s[GraphComponent.UPPER_BOUND]));
         ch.addActionListener(new Hints(hint, "You need", "colors", s[GraphComponent.EXACT]));
         bestNode.addActionListener(new Hints(hint, "You should try to solve Node", "", s[GraphComponent.BEST_NODE]));
         bestColor.addActionListener(new Hints(hint, "For this node I suggest Color", "", s[GraphComponent.BEST_COLOR]));
     }    
+    
+    private void resetHintButton(JButton c) {       
+        for(ActionListener l: c.getActionListeners()) {
+            c.removeActionListener(l);
+        }
+    }
     
     public void setMainMenu(MainMenu menu) {
         this.menu = menu;
@@ -202,8 +221,19 @@ public class OperationComponent extends JComponent{
         return c;
     }
     
-    public int countColors() {
+    public int countAvailableColors() {
         return box.getItemCount() - 2;  //first and last not used
+    }
+    
+    public int countUsedColors() {
+        int i = 1;
+        int count = 0;
+        while(i < box.getItemCount()) {
+            if(box.getItemAt(i).count > 0)
+                count++;
+            i++;
+        }
+        return count;
     }
     
     public static void main(String[] args) {

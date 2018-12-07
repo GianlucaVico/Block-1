@@ -7,14 +7,10 @@ public class FixedTimeMode extends GameMode { //doesnt know chromatic number
         this.initialTime = 60;
         this.reversedTimer = true;        
     }
-    public void setTimer(PlayTimer timer) {
-        this.timer = timer;
-    }
     
     public boolean gameEnded() {
         if(!ended){
-        //timer == 0
-        //TODO timer check to set end        
+        //timer == 0                  
             win = (graph.notColored().isEmpty() && graph.errors().isEmpty());  
             if(win || timer.getTime() == 0) {
                 ended = true;

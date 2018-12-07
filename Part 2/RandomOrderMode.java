@@ -13,7 +13,8 @@ public class RandomOrderMode extends GameMode{
         if(!ended) {
             if(graph.notColored().isEmpty() && graph.errors().isEmpty()) {
                 ended = true;
-                win = true;
+                timer.stop();
+                win = true;                
             }
         }        
         return ended;

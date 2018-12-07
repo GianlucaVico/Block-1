@@ -21,6 +21,8 @@ public class UpperBound implements Solver {
                     solution = tmp;
             }			
         }
+        /*if(solution > g.trivialUpperBound())
+            solution = g.trivialUpperBound();*/
         return solution;
     }
 

@@ -40,6 +40,8 @@ public class ChromaticNumber implements Solver {
                 }
             }
         }
+        if(solution == 0) 
+            solution = 1;
         return solution;
     }
 

@@ -8,8 +8,9 @@ public abstract class GameMode {
     protected boolean ended;
     protected boolean allowsErrors;
     protected boolean autoSelect;
+    protected PlayTimer timer;
     
-    public GameMode(GraphComponent graph, boolean reversed, boolean changeColor, int initialTime, boolean allowErrors, boolean autoSelect) {
+    public GameMode(GraphComponent graph, boolean reversed, boolean changeColor, int initialTime, boolean allowErrors, boolean autoSelect, PlayTimer timer) {
         this.graph = graph;
         this.reversedTimer = reversed;
         this.changeColor = changeColor;
@@ -17,6 +18,7 @@ public abstract class GameMode {
         this.started = false;
         this.allowsErrors = allowErrors;
         this.autoSelect = autoSelect;
+        this.timer = timer;
     }
     public GameMode(GraphComponent graph) {
         this.graph = graph;
@@ -58,5 +60,8 @@ public abstract class GameMode {
     
     public boolean autoSelection() {
         return autoSelect;
+    }
+    public void setTimer(PlayTimer timer) {
+        this.timer = timer;
     }
 }

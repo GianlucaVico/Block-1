@@ -33,8 +33,16 @@ public class LowerBound implements Solver {
                     if(res.get(i).size() > solution)
                         solution = res.get(i).size();
                 }
-                solution++;
+                for (LinkedList<Node> clique: res) {
+                    System.out.println(clique);
+                    for(Node n: clique) {
+                        System.out.print(n.getId() + " ");
+                    }
+                }
             }
+        }
+        if(solution < g.trivialLowerBound()) {
+            solution = g.trivialLowerBound();
         }
         return solution;
     }
@@ -53,16 +61,19 @@ public class LowerBound implements Solver {
             while(it.hasNext()) {
                 n = it.next();
                 if(n.getDegree() != 0){
-                    LinkedList<Node> Rclone = (LinkedList<Node>)R.clone();
-                    Rclone.add(n);                    
-                    try {
-                        findClique(Rclone, intersect(P, n.getChildren()), intersect(X, n.getChildren()), res);
-                    }catch(StackOverflowError e){                
-                        System.out.println("StackOverflowError in findClique: " + P.size());
-                    }     
-                    it.remove();
-                    if(!X.contains(n))
-                        X.add(n);
+                    //LinkedList<Node> Rclone = (LinkedList<Node>)R.clone();
+                    //Rclone.add(n);
+                    if(!R.contains(n)) {
+                        R.add(n);
+                        try {
+                            findClique(R, intersect(P, n.getChildren()), intersect(X, n.getChildren()), res);
+                        }catch(StackOverflowError e){                
+                            System.out.println("StackOverflowError in findClique: " + P.size());
+                        }     
+                        it.remove();
+                        if(!X.contains(n))
+                            X.add(n);
+                    }
                 }
             }
         }

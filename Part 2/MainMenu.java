@@ -49,6 +49,7 @@ public class MainMenu extends JComponent{
             graph.update();   
             graph.getOperationComponent().updateSolvers();
             graph.getOperationComponent().update();
+            graph.getOperationComponent().resetBox();
         }
     }
     
@@ -75,8 +76,7 @@ public class MainMenu extends JComponent{
     private JButton chooseFile;
     private PlayTimer timer;
     
-    public MainMenu(GraphComponent graph, OperationComponent operation, JPanel panel){         
-        System.out.println(mode);
+    public MainMenu(GraphComponent graph, OperationComponent operation, JPanel panel){                 
         this.graph = graph;        
         this.timer = new PlayTimer(false, 0);
         this.mode = makeGameMode(0);
@@ -176,7 +176,7 @@ public class MainMenu extends JComponent{
         switch(mode) {
             case 0:
                 m = new BitterEndMode(graph);
-                //TODO set solver
+                
                 break;
             case 1:
                 m = new FixedTimeMode(graph);
@@ -185,13 +185,13 @@ public class MainMenu extends JComponent{
                         graph.update(); //so check gamemode ended
                     }
                 });
-                timer.reset(120);
-                ((FixedTimeMode)m).setTimer(timer);
+                timer.reset(120);                
                 break;
             case 2:
                 m = new RandomOrderMode(graph);
                 break;            
-        }        
+        }    
+        m.setTimer(timer);
         return m;
     }
     

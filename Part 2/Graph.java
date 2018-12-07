@@ -36,8 +36,7 @@ public class Graph {
         }
 
         setProperties();
-        findSubgraphs();
-        System.out.println("Trivial: " + isTrivial());
+        findSubgraphs();        
     }
 
     private void setProperties() {
@@ -67,6 +66,7 @@ public class Graph {
     }
 
     //random graph from size and edge number
+    //TODO count edges correctly
     public Graph(int size, int edges) {
         edges = Math.min(edges, size*(size - 1)/2);
         rawData = new int[edges][2];
@@ -145,6 +145,8 @@ public class Graph {
                 solution = 3;
         }else if(acyclic)
             solution = 2;
+        else
+            solution = trivialUpperBound();
         return solution;
     }
 
@@ -154,6 +156,12 @@ public class Graph {
             bound = trivialSolution();
         else
             bound = getMaxDegree() + 1;
+        if(bound <= 0){
+            if(edges != 0)
+                bound = 2;
+            else
+                bound = 1;
+        }
         return bound;
     }
 

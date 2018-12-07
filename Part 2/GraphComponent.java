@@ -3,6 +3,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
@@ -120,8 +121,8 @@ public class GraphComponent extends JComponent{
         return solvers[GraphComponent.EXACT].solve();
     }
     
-    public boolean chromaticNumberUsed() {
-        return op.countColors() == getSolution();
+        public boolean chromaticNumberUsed() {
+        return op.countUsedColors() == getSolution();
     }
     
     public void setOperationComponent(OperationComponent op) {
@@ -155,13 +156,21 @@ public class GraphComponent extends JComponent{
             }                     
             //draw selection
             if(selected != null) {
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
                 g2.setColor(Color.WHITE);
                 g2.setStroke(new BasicStroke(Node.size / 2));
                 Point2D.Double p = selected.getPoint();            
-                g2.draw(new Ellipse2D.Double(p.getX() - Node.size/4, p.getY() - Node.size/4, Node.size/2, Node.size/2));           
+                g2.draw(new Ellipse2D.Double(p.getX() - Node.size/4, p.getY() - Node.size/4, Node.size/2, Node.size/2));  
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+        g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
             }
         }else {
-        //TODO write somenthing
+            if(mode.isWinner()) {
+                g2.drawString("You did it!", (float)Node.border, (float)(Node.height /2 - Node.border));
+            }else {
+                g2.drawString("Try again", (float)Node.border, (float)(Node.height /2 - Node.border));
+            }
         }
     }
     
