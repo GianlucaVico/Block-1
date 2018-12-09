@@ -82,7 +82,7 @@ class PlayTimer extends JPanel {
     public String getStringTime() {
         return seconds / 60 + " : " + seconds % 60;
     }
-    
+    /*
     public static void main(String[] args) {
         JFrame frame=new JFrame();
         frame.setLayout(new BorderLayout());
@@ -96,5 +96,5 @@ class PlayTimer extends JPanel {
         frame.setVisible(true);  
                   
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
-    }
+    }*/
 }

@@ -121,6 +121,7 @@ public class MainMenu extends JComponent{
         nodes = new JSpinner();
         file = new JTextField();    //change to a JFileChooser
         file.setEnabled(false);
+        file.setEditable(false);
         chooseFile = new JButton("Choose");
         chooseFile.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -172,11 +173,10 @@ public class MainMenu extends JComponent{
         GameMode m = null;       
         timer.stop();
         timer.reset(0);
-        timer.setReversed(false, null);
+        timer.setReversed(false, null);  
         switch(mode) {
             case 0:
-                m = new BitterEndMode(graph);
-                
+                m = new BitterEndMode(graph);                
                 break;
             case 1:
                 m = new FixedTimeMode(graph);
@@ -191,7 +191,8 @@ public class MainMenu extends JComponent{
                 m = new RandomOrderMode(graph);
                 break;            
         }    
-        m.setTimer(timer);
+        if(m != null)
+            m.setTimer(timer);
         return m;
     }
     
@@ -216,7 +217,7 @@ public class MainMenu extends JComponent{
     public PlayTimer getTimer() {
         return timer;
     }
-    
+    /*
     public static void main(String[] args) {  
         JFrame frame = new JFrame("MainMenu");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -225,5 +226,5 @@ public class MainMenu extends JComponent{
         panel.add(new MainMenu(null, null, panel));
         frame.add(panel);
         frame.setVisible(true);        
-    }  
+    }  */
 }

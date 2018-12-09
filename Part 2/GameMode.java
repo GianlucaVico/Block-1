@@ -20,11 +20,11 @@ public abstract class GameMode {
         this.autoSelect = autoSelect;
         this.timer = timer;
     }
-    public GameMode(GraphComponent graph) {
-        this.graph = graph;
-        this.started = false;
-        this.allowsErrors = true;
-        this.autoSelect = false;
+    public GameMode(GraphComponent g) {
+        graph = g;
+        started = false;
+        allowsErrors = true;
+        autoSelect = false;
     }
     
     //don't check correct colors -> done by graph component
@@ -61,7 +61,7 @@ public abstract class GameMode {
     public boolean autoSelection() {
         return autoSelect;
     }
-    public void setTimer(PlayTimer timer) {
-        this.timer = timer;
+    public void setTimer(PlayTimer t) {
+        timer = t;
     }
 }

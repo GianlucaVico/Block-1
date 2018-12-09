@@ -70,13 +70,15 @@ public class Graph {
     public Graph(int size, int edges) {
         edges = Math.min(edges, size*(size - 1)/2);
         rawData = new int[edges][2];
-        int u,v,c;
+        int u,v,c;  //node, node, counter
         boolean d;
         for(int i = 0; i < edges; i++) {
             do{
                 d = false;
                 u = (int)(Math.random()*size + 1);
-                v = (int)(Math.random()*size + 1);
+                do {
+                    v = (int)(Math.random()*size + 1);
+                }while(v == u);
                 c = 0;
                 while(c < i && !d){
                     if((rawData[c][0] == u && rawData[c][1] == v) || (rawData[c][0] == v && rawData[c][1] == u))
@@ -86,6 +88,10 @@ public class Graph {
             }while(d);
 
             rawData[i] = new int[]{u, v};
+        }
+        System.out.println(this);
+        for(int[] e: rawData) {
+            System.out.println(e[0] + " " + e[1]);
         }
         init(size);
     }

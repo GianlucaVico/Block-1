@@ -1,5 +1,6 @@
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -166,6 +167,7 @@ public class GraphComponent extends JComponent{
         g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
             }
         }else {
+            g2.setFont(new Font("Sans serif", Font.BOLD, 30));
             if(mode.isWinner()) {
                 g2.drawString("You did it!", (float)Node.border, (float)(Node.height /2 - Node.border));
             }else {
@@ -204,7 +206,7 @@ public class GraphComponent extends JComponent{
         solvers[3] = new BestNode(g);                                                    //best node
         solvers[4] = new ColorHints(this);						//best color for this node
     }
-        
+    /* 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
         frame.setSize(400,500);
@@ -214,5 +216,5 @@ public class GraphComponent extends JComponent{
         frame.setTitle("Chromatic Number Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-    }
+    }*/
 }

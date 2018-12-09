@@ -1,6 +1,4 @@
-public class FixedTimeMode extends GameMode { //doesnt know chromatic number
-    private PlayTimer timer;
-    
+public class FixedTimeMode extends GameMode { //doesnt know chromatic number      
     public FixedTimeMode(GraphComponent graph) {
         super(graph);
         this.changeColor = true;
@@ -12,8 +10,9 @@ public class FixedTimeMode extends GameMode { //doesnt know chromatic number
         if(!ended){
         //timer == 0                  
             win = (graph.notColored().isEmpty() && graph.errors().isEmpty());  
-            if(win || timer.getTime() == 0) {
+            if(win || timer.getTime() <= 0) {
                 ended = true;
+                timer.stop();
             }
         }
         return ended;

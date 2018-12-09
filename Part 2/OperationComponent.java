@@ -235,7 +235,7 @@ public class OperationComponent extends JComponent{
         }
         return count;
     }
-    
+    /*
     public static void main(String[] args) {
         JFrame frame = new JFrame("OperationComponent");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -249,5 +249,5 @@ public class OperationComponent extends JComponent{
 
         frame.add(panel);
         frame.setVisible(true);
-    }
+    }*/
 }

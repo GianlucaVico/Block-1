@@ -19,7 +19,7 @@ public class ChromaticNumberGame {
         op.update();
         gc.setOperationComponent(op);
         opPanel.add(op);
-        
+          
         //make MainMenu
         MainMenu menu = new MainMenu(gc, op, menuPanel);
         op.setMainMenu(menu);

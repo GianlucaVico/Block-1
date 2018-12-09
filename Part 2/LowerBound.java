@@ -63,7 +63,7 @@ public class LowerBound implements Solver {
                 if(n.getDegree() != 0){
                     //LinkedList<Node> Rclone = (LinkedList<Node>)R.clone();
                     //Rclone.add(n);
-                    if(!R.contains(n)) {
+                    //if(!R.contains(n)) {
                         R.add(n);
                         try {
                             findClique(R, intersect(P, n.getChildren()), intersect(X, n.getChildren()), res);
@@ -71,9 +71,9 @@ public class LowerBound implements Solver {
                             System.out.println("StackOverflowError in findClique: " + P.size());
                         }     
                         it.remove();
-                        if(!X.contains(n))
+                       // if(!X.contains(n))
                             X.add(n);
-                    }
+                    //}
                 }
             }
         }
