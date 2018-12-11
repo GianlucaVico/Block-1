@@ -1,17 +1,31 @@
 import java.util.LinkedList;
-
+/**
+ * Find the upper bound of the chromatic number of a graph
+ */
 public class UpperBound implements Solver {
     private Graph g;
     private int solution;
+    
+    /**
+     * Make a new solver for this graph
+     * @param g Graph to use
+     */
     public UpperBound(Graph g) {
         this.g = g;
         solution = -1;
     }
 
+    /**
+     * @return Graph used
+     */
     public Graph getGraph() {
         return g;
     }
     //return the solution
+    /**
+     * This method changes the graph
+     * @return upper bound of the chromatic number
+     */
     public int solve() {
         if(solution == -1) {
             int tmp = -1; 
@@ -26,6 +40,11 @@ public class UpperBound implements Solver {
         return solution;
     }
 
+    /**
+     * Get the bound of a subgraph
+     * @param sub subgraph
+     * @return boujnd of the chromatic number of the subgraph
+     */
     private int getBound(Graph sub) {
         int bound = -1;
         if(sub.isTrivial()) {
@@ -99,7 +118,11 @@ public class UpperBound implements Solver {
         //return bound + 1;
         return bound;
     }
-
+    
+    /**
+     * @param n Node to check
+     * @return number of linked noes with the same color
+     */
     private int countConflicts(Node n) {
         int color = n.getColor();
         int c = 0;

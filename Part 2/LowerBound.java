@@ -1,19 +1,31 @@
 import java.util.LinkedList;
 import java.util.ListIterator;
-
+/**
+ * Algorithm to find the lower bound of the chromatic number of a graph. 
+ * This implements the Bron-Kerbosch algorithm.
+ */
 public class LowerBound implements Solver {
     private Graph g;
     private int solution;
 
+    /**
+     * @param g Graph to use
+     */
     public LowerBound(Graph g) {
         this.g = g;
         solution = -1;
     }
 
+    /**
+     * @return the graph used
+     */
     public Graph getGraph() {
         return g;
     }
     //return the solution
+    /**
+     * @return the lower bound of the graph. Computations are done only during the first call of this method
+     */
     public int solve() {
         if (solution == -1){
             if(g.isTrivial())
@@ -33,12 +45,14 @@ public class LowerBound implements Solver {
                     if(res.get(i).size() > solution)
                         solution = res.get(i).size();
                 }
+                /*
                 for (LinkedList<Node> clique: res) {
                     System.out.println(clique);
                     for(Node n: clique) {
                         System.out.print(n.getId() + " ");
                     }
                 }
+                */
             }
         }
         if(solution < g.trivialLowerBound()) {

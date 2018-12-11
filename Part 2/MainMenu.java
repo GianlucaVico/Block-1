@@ -9,7 +9,6 @@ import javax.swing.AbstractButton;
 import javax.swing.Box;
 import javax.swing.JLabel; 
 import javax.swing.JButton; 
-import javax.swing.JFrame; 
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.ButtonGroup;
@@ -20,6 +19,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileSystemView;
 
+/**
+ * Panel to start a new game 
+ */
 public class MainMenu extends JComponent{
     class StartAction implements ActionListener { 
         private ButtonGroup modes;        
@@ -76,6 +78,12 @@ public class MainMenu extends JComponent{
     private JButton chooseFile;
     private PlayTimer timer;
     
+    /**
+     * Make a new MainMenu component
+     * @param graph GraphComponent used in the game
+     * @param operation Operation component used in the game
+     * @param panel JPanel to add other components
+     */
     public MainMenu(GraphComponent graph, OperationComponent operation, JPanel panel){                 
         this.graph = graph;        
         this.timer = new PlayTimer(false, 0);
@@ -169,6 +177,11 @@ public class MainMenu extends JComponent{
         panel.add(timer);
     }      
     
+    /**
+     * Make a new GameMode
+     * @param mode 0: BitterEndMode, 1: FixedTimeMode, 2: RandomOrderMode 
+     * @return the GameMode
+     */
     public GameMode makeGameMode(int mode) {
         GameMode m = null;       
         timer.stop();
@@ -196,14 +209,23 @@ public class MainMenu extends JComponent{
         return m;
     }
     
+    /**
+     * @param m use this GameMode
+     */
     public void setGameMode(GameMode m){       
         this.mode = m;
     }
     
+    /**
+     * @return the GameMode used
+     */
     public GameMode getGameMode(){
         return mode;
     }
     
+    /**
+     * @return make a new Graph
+     */
     public Graph makeGraph() {
         Graph g;
         if(file.isEnabled()) {
@@ -214,6 +236,9 @@ public class MainMenu extends JComponent{
         return g;
     }
     
+    /**
+     * @return the PlayTimer used in the game
+     */
     public PlayTimer getTimer() {
         return timer;
     }

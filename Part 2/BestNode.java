@@ -1,10 +1,17 @@
+/** Solver that return the id of the easiest node to solve */
 public class BestNode implements Solver {
     private Graph g;
-
+    
+    /**     
+     * @param g Graph object to solve. BestNode doesn't change it
+     */
     public BestNode(Graph g) {
             this.g = g;
     }
-
+    
+    /** Solve the graph
+     * @return the id of a node or -1 if all nodes have a color
+     */
     public int solve() {
         int solution = -1;
         Node tmp = null;	//current best next node to solve
@@ -28,7 +35,8 @@ public class BestNode implements Solver {
             solution = tmp.getId();
         return solution;
     }
-
+    
+    /** @return the Graph used by this object*/
     public Graph getGraph() {
             return g;
     }

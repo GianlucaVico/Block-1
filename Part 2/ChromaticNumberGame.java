@@ -5,8 +5,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 //main frame
+/**
+ * Graph coloring game
+ */
 public class ChromaticNumberGame {
-    public static void main(String[] args) {
+    /**
+     * Run the game
+     */
+    public static void run(String[] args) {
         JFrame frame = new JFrame("Game");       
         JPanel opPanel = new JPanel();
         JPanel menuPanel = new JPanel();
@@ -47,5 +53,9 @@ public class ChromaticNumberGame {
         //frame.add(gc, constr);     
         frame.add(gc, 0, 1);
         frame.setVisible(true);
+    }
+    
+    public static void main(String[] args) {
+        run(args);
     }
 }

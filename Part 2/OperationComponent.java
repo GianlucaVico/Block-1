@@ -5,6 +5,11 @@ import java.awt.event.ActionListener;
 
 import java.awt.*;
 
+/**
+ * Panel for the action that can be performed during the game
+ * - Change the color of a node
+ * - Get some hints
+ */
 public class OperationComponent extends JComponent{
     class Item {
         public int count;
@@ -88,6 +93,11 @@ public class OperationComponent extends JComponent{
     private JButton low, up, ch, bestNode, bestColor;   //to make graph changeable
     //private Solver lowS, upS, chS, bnS, bcS;   //to make graph changeable
     
+    /**
+     * Make a new OperationComponent
+     * @param graphComponent GraphComponent of the game
+     * @param panel panel used to add other components
+     */
     public OperationComponent(GraphComponent graphComponent, JPanel panel) {
         this.panel = panel;
         this.graphComponent = graphComponent;
@@ -116,7 +126,7 @@ public class OperationComponent extends JComponent{
             //button listener -> display hints of label
         //make solvers (some solvers need other solver to work)
         updateSolvers();
-        //combo -> update counter/operation panel */
+        //combo -> update counter/operation panel 
         //box.addActionListener(new UpdateColor());
         
         //add to panel
@@ -130,6 +140,9 @@ public class OperationComponent extends JComponent{
         }
     }
 
+    /**
+     * @return the next color to add to the list
+     */
     private Color makeNextColor() {
         Color lastColor = box.getItemAt(box.getItemCount() - 1).color;
         float[] hsb = Color.RGBtoHSB(lastColor.getRed(), lastColor.getGreen(), lastColor.getBlue(), null);        
@@ -142,6 +155,9 @@ public class OperationComponent extends JComponent{
         return Color.getHSBColor(hsb[0], hsb[1], hsb[2]);
     }
 
+    /**
+     * Change the color of the selected node
+     */
     public void setColor() {
         Node selected = graphComponent.getSelectedNode();        
         if(selected != null){// && !(selected.getColor() != - 1 && menu.getGameMode().canChangeColor())) {
@@ -160,6 +176,9 @@ public class OperationComponent extends JComponent{
         updateBox();          
     }
         
+    /**
+     * Update the information displayed
+     */
     public void update() {
         Node selected = graphComponent.getSelectedNode();
         if(selected != null) {                                 
@@ -171,6 +190,9 @@ public class OperationComponent extends JComponent{
         //check winning condition
     }
     
+    /**
+     * Update color list
+     */
     private void updateBox() {
         int length = box.getItemCount();
         if(box.getItemAt(length - 1).count != 0) {
@@ -180,6 +202,9 @@ public class OperationComponent extends JComponent{
         }
     }
     
+    /**
+     * Reset color list
+     */
     public void resetBox() {
         int length = box.getItemCount();
         while(length > 2) {
@@ -188,6 +213,9 @@ public class OperationComponent extends JComponent{
         }
     }
     
+    /**
+     * set the new solver from the GraphComponent
+     */
     public void updateSolvers() {        
         Solver[] s = this.graphComponent.getSolvers();        
         resetHintButton(low);
@@ -203,16 +231,28 @@ public class OperationComponent extends JComponent{
         bestColor.addActionListener(new Hints(hint, "For this node I suggest Color", "", s[GraphComponent.BEST_COLOR]));
     }    
     
+    /**
+     * Remove old listener
+     * @param c JButton to reset
+     */
     private void resetHintButton(JButton c) {       
         for(ActionListener l: c.getActionListeners()) {
             c.removeActionListener(l);
         }
     }
     
+    /**
+     * @param menu MainMenu of the game
+     */
     public void setMainMenu(MainMenu menu) {
         this.menu = menu;
     }
     
+    /**
+     * Get colors by index
+     * @param i index
+     * @return color of index i
+     */
     public Color getColor(int i) {
         Color c = Color.BLACK;
         if (i < box.getItemCount()-1 && i >= 0) {
@@ -221,10 +261,16 @@ public class OperationComponent extends JComponent{
         return c;
     }
     
+    /**
+     * @return number of color that can be used
+     */
     public int countAvailableColors() {
         return box.getItemCount() - 2;  //first and last not used
     }
     
+    /**
+     * @return number of color used
+     */
     public int countUsedColors() {
         int i = 1;
         int count = 0;

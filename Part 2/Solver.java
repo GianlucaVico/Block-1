@@ -1,5 +1,12 @@
 public interface Solver {
 	//return the solution
-	int solve();
-	Graph getGraph();
+    /**     
+     * @return The solution for the problem
+     */
+    int solve();
+    
+    /**
+     * @return the graph used
+     */
+    Graph getGraph();
 }
