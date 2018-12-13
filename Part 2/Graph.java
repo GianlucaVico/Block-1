@@ -58,6 +58,10 @@ public class Graph {
         complete = (edges ==(size)*(size - 1) / 2);	
         cyclic = ((minDegree == maxDegree) && (maxDegree == 2));
         acyclic = (removed.size() == nodes.length);
+        
+        //System.out.println("Complete: " + complete);
+        //System.out.println("Cyclic: " + cyclic);
+        //System.out.println("Acyclic: " + acyclic);
     }
 
     //graph from file
@@ -274,6 +278,8 @@ public class Graph {
             if(minDegree == Integer.MAX_VALUE)
                 minDegree = 0;
         }
+        //System.out.println("Min: " + minDegree);
+        //System.out.println("Max: " + maxDegree);
     }
 
     /**
@@ -287,7 +293,7 @@ public class Graph {
      * @return the minimum degree of this graph
      */
     public int getMinDegree() {	
-        return maxDegree;
+        return minDegree;
     }
     
     /**

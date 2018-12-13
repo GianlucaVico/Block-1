@@ -161,16 +161,19 @@ public class OperationComponent extends JComponent{
     public void setColor() {
         Node selected = graphComponent.getSelectedNode();        
         if(selected != null){// && !(selected.getColor() != - 1 && menu.getGameMode().canChangeColor())) {
-            if(selected.getColor() != - 1) {                
-                box.getItemAt(selected.getColor() + 1).count--; //colors from -1
-            }
-            int tmp = selected.getColor(); //if there are errors
-            selected.setColor(box.getSelectedIndex() -1);
-            if(!menu.getGameMode().errorAllowed() && graphComponent.errors().size() != 0){  //if error come back
-                selected.setColor(tmp);
-                
-            }else{
-                ((Item)box.getSelectedItem()).count++;              //if no errors update counter
+            if(selected.getColor() == - 1 || menu.getGameMode().canChangeColor()){
+                if(selected.getColor() != - 1) {                
+                    box.getItemAt(selected.getColor() + 1).count--; //colors from -1
+                }
+                int tmp = selected.getColor(); //if there are errors
+                selected.setColor(box.getSelectedIndex() -1);
+
+                if(!menu.getGameMode().errorAllowed() && graphComponent.errors().size() != 0){  //if error come back
+                    selected.setColor(tmp);
+
+                }else{
+                    ((Item)box.getSelectedItem()).count++;              //if no errors update counter
+                }
             }
         }
         updateBox();          
@@ -225,7 +228,7 @@ public class OperationComponent extends JComponent{
         resetHintButton(bestColor);
         
         low.addActionListener(new Hints(hint, "You need at least", "colors", s[GraphComponent.LOWER_BOUND]));
-        up.addActionListener(new Hints(hint, "You need less than", "colors", s[GraphComponent.UPPER_BOUND]));
+        up.addActionListener(new Hints(hint, "You need at most", "colors", s[GraphComponent.UPPER_BOUND]));
         ch.addActionListener(new Hints(hint, "You need", "colors", s[GraphComponent.EXACT]));
         bestNode.addActionListener(new Hints(hint, "You should try to solve Node", "", s[GraphComponent.BEST_NODE]));
         bestColor.addActionListener(new Hints(hint, "For this node I suggest Color", "", s[GraphComponent.BEST_COLOR]));

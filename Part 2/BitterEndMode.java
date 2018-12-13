@@ -21,7 +21,8 @@ public class BitterEndMode extends GameMode {   //know chromatic number
         //always win        
             if(graph.notColored().isEmpty() && graph.errors().isEmpty() && graph.getOperationComponent().countUsedColors() <= graph.getSolvers()[GraphComponent.UPPER_BOUND].solve()) {
                 ended = true;
-                if(graph.chromaticNumberUsed()) {
+                //if(graph.chromaticNumberUsed()) {
+                if(graph.getSolution() >= graph.getOperationComponent().countUsedColors()){
                     win = true;
                     timer.stop();
                 }

@@ -26,17 +26,18 @@ public class UpperBound implements Solver {
      * This method changes the graph
      * @return upper bound of the chromatic number
      */
-    public int solve() {
+    public int solve() {        
         if(solution == -1) {
             int tmp = -1; 
             for(int i = 0; i < g.countSubgraphs(); i++) {
                 tmp = getBound(g.getSubgraph(i));
                 if(tmp > solution)
                     solution = tmp;
-            }			
+                //System.out.println(solution);
+            }
         }
-        /*if(solution > g.trivialUpperBound())
-            solution = g.trivialUpperBound();*/
+        if(solution < 3 && !g.isTrivial())
+            solution = 3;
         return solution;
     }
 

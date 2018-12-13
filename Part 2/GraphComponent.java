@@ -243,12 +243,11 @@ public class GraphComponent extends JComponent{
         if(g.getSize() != 0) {
             if(selected == null) {
                 selected = g.getNode(0);
-            }else if(selected.getId() != g.getSize() - 1) {
-                if(selected.getColor() != -1)
+            }else if((selected.getId() != g.getSize() - 1) &&(selected.getColor() != -1)) {
                     selected = g.getNode(selected.getId() + 1);
-            }else {
+            }/*else {
                 selected = null;                
-            }
+            }*/
         }
     }        
     

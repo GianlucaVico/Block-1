@@ -54,7 +54,7 @@ public class LowerBound implements Solver {
                     System.out.println();
                 }
                 System.out.println(solution);*/
-                solution++;
+                //solution++;
             }
         }
         if(solution < g.trivialLowerBound()) {
