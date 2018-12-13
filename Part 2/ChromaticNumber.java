@@ -34,17 +34,17 @@ public class ChromaticNumber implements Solver {
      * @return the chromatic number of the graph
      */
     public int solve() {
-        if(solution == -1){
-            if(g.isTrivial()){
+        if(solution == -1){         //fist time that this method is called
+            if(g.isTrivial()){      //check if it trivial
                 solution = g.trivialSolution();
-            }else if(lower.solve() == upper.solve()) {
+            }else if(lower.solve() == upper.solve()) {  //check if bound algorithm agree
                 solution = upper.solve();
             }else{
                 solution = Integer.MAX_VALUE;
                 int tmp;
                 for(int i = 0; i < g.countSubgraphs(); i++){
                     tmp = getBound(g.getSubgraph(i));
-                    if(tmp < solution)
+                    if(tmp < solution) 
                         solution = tmp;
                 }
                 if(solution < lower.solve()) {

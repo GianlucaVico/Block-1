@@ -45,14 +45,16 @@ public class LowerBound implements Solver {
                     if(res.get(i).size() > solution)
                         solution = res.get(i).size();
                 }
-                /*
-                for (LinkedList<Node> clique: res) {
-                    System.out.println(clique);
+                
+                /*for (LinkedList<Node> clique: res) {
+                    System.out.print(clique);
                     for(Node n: clique) {
                         System.out.print(n.getId() + " ");
                     }
+                    System.out.println();
                 }
-                */
+                System.out.println(solution);*/
+                solution++;
             }
         }
         if(solution < g.trivialLowerBound()) {
@@ -63,31 +65,27 @@ public class LowerBound implements Solver {
 	
     private void findClique(LinkedList<Node> R, LinkedList<Node> P, LinkedList<Node> X, LinkedList<LinkedList<Node>> res) {
         //stop
-        if(P.isEmpty() && X.isEmpty()) {
-            //return;
+        if(P.isEmpty() && X.isEmpty()) {        
             res.add(R);
-            return;
-        }
-        //next recursion
-        if(!P.isEmpty()) {
+            //return;
+        }else{ //if(!P.isEmpty()) {         //next recursion
             ListIterator<Node> it = P.listIterator(0);
             Node n;
             while(it.hasNext()) {
                 n = it.next();
+                it.remove();
                 if(n.getDegree() != 0){
-                    //LinkedList<Node> Rclone = (LinkedList<Node>)R.clone();
-                    //Rclone.add(n);
+                    LinkedList<Node> Rclone = (LinkedList<Node>)R.clone();
+                    Rclone.add(n);
                     //if(!R.contains(n)) {
-                        R.add(n);
+                        //R.add(n);
                         try {
-                            findClique(R, intersect(P, n.getChildren()), intersect(X, n.getChildren()), res);
+                            findClique(Rclone, intersect(P, n.getChildren()), intersect(X, n.getChildren()), res);
                         }catch(StackOverflowError e){                
                             System.out.println("StackOverflowError in findClique: " + P.size());
                         }     
-                        it.remove();
-                       // if(!X.contains(n))
-                            X.add(n);
-                    //}
+                        
+                        X.add(n);
                 }
             }
         }
