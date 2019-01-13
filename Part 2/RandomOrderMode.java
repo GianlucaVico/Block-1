@@ -1,3 +1,4 @@
+/**Created by Gianluca Vico */
 /**
  * GameMode, the user has to color a graph following the given order of nodes 
  */

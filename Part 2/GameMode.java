@@ -1,3 +1,5 @@
+
+/** Created by Louis Gauthy, Gianluca Vico */
 /**
  * GameMode represent the rules of the game
  */

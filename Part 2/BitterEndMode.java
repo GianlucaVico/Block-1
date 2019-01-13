@@ -1,3 +1,4 @@
+/**Created by Louis Gauthy */
 /**
  * GameMode, the player has to find the chromatic number
  */

@@ -1,3 +1,4 @@
+/** Created by Nata Guseva, Roberto Asseily */
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;

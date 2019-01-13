@@ -1,3 +1,4 @@
+/**Created by Harry Forest, Gianluca Vico */
 import java.util.LinkedList;
 /**
  * Find the upper bound of the chromatic number of a graph

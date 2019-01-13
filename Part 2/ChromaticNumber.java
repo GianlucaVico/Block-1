@@ -1,3 +1,4 @@
+/**Created by Louis Gauthy */
 import java.util.LinkedList;
 
 /**

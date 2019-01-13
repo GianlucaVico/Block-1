@@ -1,3 +1,4 @@
+/** Created by Ella G. Noomen, Louis Gauthy*/
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;

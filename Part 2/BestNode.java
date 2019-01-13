@@ -1,3 +1,4 @@
+/**Created by Gianluca Vico*/
 /** Solver that return the id of the easiest node to solve */
 public class BestNode implements Solver {
     private Graph g;

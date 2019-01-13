@@ -1,3 +1,4 @@
+/**Created by Roberto Asseily */
 public interface Solver {
 	//return the solution
     /**     

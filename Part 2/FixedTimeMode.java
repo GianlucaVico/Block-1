@@ -1,3 +1,4 @@
+/** Created by Harry Forest, Gianluca Vico */
 /**
  * GameMode, the player has to color the graph within 2 minutes
  */

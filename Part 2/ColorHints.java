@@ -1,3 +1,4 @@
+/** Created by Gianluca Vico */
 /**
  * Suggest the best color for the selected node of a GraphComponent
  */

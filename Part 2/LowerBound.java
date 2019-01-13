@@ -1,3 +1,4 @@
+/** Created by Ella G. Noomen, Gianluca Vico */
 import java.util.LinkedList;
 import java.util.ListIterator;
 /**
