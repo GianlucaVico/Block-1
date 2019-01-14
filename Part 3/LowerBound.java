@@ -20,7 +20,7 @@ public class LowerBound implements Solver {
         upperBound = upper.solve();
         done = false;
     }
-
+    
     /**
      * @return the graph used
      */

@@ -47,14 +47,15 @@ public class ChromaticNumber implements Solver {
                     tmp = getBound(g.getSubgraph(i));                    
                     if(tmp > solution) {
                         solution = tmp;                        
-                    }
-                    
+                    }                    
                 }
                 
                 if(solution > upper.solve()){
+                    //System.out.println("--solution > upper bound: " + solution);
                     solution = upper.solve();
                 }
                 if(solution < lower.solve()) {
+                    //System.out.println("--solution < lower bound: " + solution);
                     solution = lower.solve();
                 }                
             }

@@ -1,6 +1,3 @@
-
-import java.util.LinkedList;
-
 public class Main {
     private static boolean done;
     
@@ -24,27 +21,31 @@ public class Main {
         }
     }
     public static void solve(String fileName) {
-        Graph g = new Graph(fileName);                
+        Graph g = new Graph(fileName); 
         up(g.trivialUpperBound());
         low(g.trivialLowerBound());
-        
         if(g.isTrivial()) {
             chromatic(g.trivialSolution());
-        }else{
-            g.sort();
+        } else{
+            Solver b = new Bipartite(g);
+            if(b.solve() == 1) {
+                chromatic(2);
+            }else {
+                g.sort();
+                System.out.println("--sorted");
+                UpperBound upper = new UpperBound(g);
+                Solver bondy = new BondyLowerBound(g);
+                Solver lower = new LowerBound(g, upper);
 
-            UpperBound upper = new UpperBound(g);
-            Solver bondy = new BondyLowerBound(g);
-            Solver lower = new LowerBound(g, upper);
-
-            up(upper.solve());
-            low(bondy.solve());
-            chromatic(upper.solve(), bondy.solve());
-            low(lower.solve());
-            chromatic(upper.solve(), lower.solve());
-            if(!done) {
-                Solver exact = new ChromaticNumber(g, lower, upper); 
-                chromatic(exact.solve());
+                up(upper.solve());
+                low(bondy.solve());
+                chromatic(upper.solve(), bondy.solve());
+                low(lower.solve());
+                chromatic(upper.solve(), lower.solve());
+                if(!done) {
+                    Solver exact = new ChromaticNumber(g, lower, upper); 
+                    chromatic(exact.solve());
+                }
             }
         }
     }
@@ -71,7 +72,7 @@ public class Main {
         }
         for(String s: args) {
             done = false;
-            solve(s);                        
+            solve(s);                                    
         }    
     }
 }

@@ -53,6 +53,7 @@ public class Graph {
         try {
             findSubgraphs();        
         }catch(StackOverflowError e) {
+            //System.out.println("--Cannot find subgraphs");
             subgraphs.add(this);
         }
     }
