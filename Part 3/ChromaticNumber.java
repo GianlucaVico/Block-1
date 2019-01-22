@@ -9,18 +9,20 @@ public class ChromaticNumber implements Solver {
     private int solution;
     private Solver lower;
     private Solver upper;
-
+    
     /**
      * Make a new solver for this graph, using a LowerBound and a UpperBound objects to solve this problem faster
      * @param g Graph to use
      * @param lower LowerBound solver
      * @param upper UpperBound solver
      */
-    public ChromaticNumber(Graph g, Solver lower, Solver upper) {
+    public ChromaticNumber(Graph g, Solver lower, Solver upper, boolean bipartite) {
         this.g = g;
         this.lower = lower;
         this.upper = upper;
         solution = -1;
+        if(bipartite)
+            solution = 2;
     }
 
     /**
@@ -52,11 +54,10 @@ public class ChromaticNumber implements Solver {
                 
                 if(solution > upper.solve()){
                     //System.out.println("--solution > upper bound: " + solution);
-                    solution = upper.solve();
-                }
-                if(solution < lower.solve()) {
+                    solution = -1;
+                }else if(solution < lower.solve() || solution <= 2) {
                     //System.out.println("--solution < lower bound: " + solution);
-                    solution = lower.solve();
+                    solution = -1;
                 }                
             }
         }

@@ -8,7 +8,6 @@ import java.util.LinkedList;
  * represent a collection of Node objects and their relations
  */
 public class Graph {
-    //TODO eliminate useless nodes
     private LinkedList<Node> nodes;  
     private int[][] rawData;
     private int edges;
@@ -179,7 +178,7 @@ public class Graph {
      * Clone this graph
      * @return a copy of this graph
      */
-    public Graph clone() {
+    public Graph clone() {        
         Graph newGraph = new Graph(this.rawData, this.initSize);
         return newGraph;
     }
@@ -358,6 +357,9 @@ public class Graph {
         return r;
     }
     
+    /**
+     * Remove the nodes that don't change the chromatic number
+     */
     public void reduce() {
         boolean changes;
         do {

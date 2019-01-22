@@ -1,52 +1,46 @@
+/**
+ * Algorithm to find a lower bound of the chromatic number of a graph. 
+ * This implements the Bondy algorithm.
+ */
 public class BondyLowerBound implements Solver{
     private Graph g;
     private int solution;
-    private int sigmaJ, sumJ, sumI, k;
-    private boolean done;
+    private int j, sum, k;
     
+    /**
+     * @param g Graph to use
+     */
     public BondyLowerBound(Graph g) {
         this.g = g;
         solution = -1;
-        sumI = 0;
-        sumJ = 0;
-        sigmaJ = 0;
-        k = 0;
+        sum = 0;        
+        j = 0;
+        k = 1;
         solution = -1;      
-        done = false;
+        
     }
     
-    public int solve(){
-        while(!done) {
-            solution = nextSolution();
+    /**
+     * @return a lower bound of the graph. Computations are done only during the first call of this method
+     */
+    public int solve(){        
+        //while(sumI < g.getSize()) {
+        if(sum == 0){
+            do{
+                k++;
+                j = g.getSize() - g.getNodes().get(sum).getDegree();
+                sum += j;
+                /*if(sum < g.getSize())
+                    k++;*/
+            }while(sum < g.getSize());
+            solution = k;
         }
+        //System.out.println("--bondy: " + solution);
         return solution;
     }
     
-    public int nextSolution() {
-        int next = 0;
-        if(done) {
-            next = solution;
-        }else {
-            int tmp = nextSigmaJ();
-            if((sumJ + tmp) < g.getSize() && tmp != 0) {
-                k++;
-                next = k; 
-            }else
-                next = solution;
-        }
-        return next;
-    }
-    
-    public Graph getGraph() { return g;}
-    
-    private int nextSigmaJ() {
-        if((sumI + 1) >= g.getSize()) {
-            done = true;
-            return 0;
-        }else{            
-            sigmaJ = g.getSize() - g.getNodes().get(sumI + 1).getDegree();
-            sumI += sigmaJ;
-            return sigmaJ;
-        }
-    }    
+    /**
+     * @return the graph used
+     */
+    public Graph getGraph() { return g;}            
 }

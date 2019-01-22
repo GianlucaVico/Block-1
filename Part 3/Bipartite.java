@@ -1,15 +1,29 @@
-
 import java.util.LinkedList;
-
+/**
+ * This algorithm check if the graph is a bipartite graph.
+ */
 public class Bipartite implements Solver{
     private int solution;
     private Graph g;
     
+    /**
+     * @return the graph used
+     */
     public Graph getGraph() {return g;}
+    
+    /**
+     * @param g Grapg to use
+     */
     public Bipartite(Graph g) {
         this.g = g;
         solution = -1;
     }
+    
+    /**
+     * Check if the graph is a bipartite graph.
+     * Computation are done only when this method is called for the first time.
+     * @return 1 if it is bipartite, 0 if not
+     */
     public int solve() {
         if(solution == -1) {
             if(g.isTrivial()){
